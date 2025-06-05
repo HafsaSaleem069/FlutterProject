@@ -1,0 +1,717 @@
+[{
+  "_id": {
+    "$oid": "6764574afa1ecc705f9184a4"
+  },
+  "name": "Beef Burger",
+  "category": "Burger",
+  "image": "../images/cheez burger.jpg",
+  "description": "A juicy beef patty with caramelized onions and secret sauce.",
+  "price": 999,
+  "createdAt": {
+    "$date": "2024-12-19T17:26:34.467Z"
+  },
+  "updatedAt": {
+    "$date": "2024-12-19T17:26:34.467Z"
+  },
+  "__v": 0
+},
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184a5"
+    },
+    "name": "Zinger Burger",
+    "category": "Burger",
+    "image": "../images/zinger burger.jpg",
+    "description": "Crispy chicken with a spicy kick, layered with fresh lettuce.",
+    "price": 750,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.468Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.468Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184a6"
+    },
+    "name": "Cheez Burger",
+    "category": "Burger",
+    "image": "../images/beef burger.jpg",
+    "description": "Overflowing with melted cheddar and a dash of smoky flavor.",
+    "price": 1199,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.468Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.468Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184a7"
+    },
+    "name": "Double Decker",
+    "category": "Burger",
+    "image": "../images/double decker.jpg",
+    "description": "Two thick patties stacked with tangy pickles and creamy mayo.",
+    "price": 899,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.468Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.468Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184a8"
+    },
+    "name": "Chicken Fillet",
+    "category": "Burger",
+    "image": "../images/Chicken Fillet Burger (Crispy Buttermilk Fried Chicken Burger).jpeg",
+    "description": "Golden fried chicken fillet with a hint of garlic and herb seasoning.",
+    "price": 999,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.469Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.469Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184a9"
+    },
+    "name": "Veggie Burger",
+    "category": "Burger",
+    "image": "../images/Chickpea Veggie Burgers.jpeg",
+    "description": "Loaded with fresh veggies and a flavorful chickpea patty.",
+    "price": 750,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.469Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.469Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184aa"
+    },
+    "name": "Steak Burger",
+    "category": "Burger",
+    "image": "../images/steak Burger.jpeg",
+    "description": "Tender steak slices, sautéed mushrooms, and a drizzle of BBQ sauce.",
+    "price": 1399,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.471Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.471Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184ab"
+    },
+    "name": "Kidney Bean Burger",
+    "category": "Burger",
+    "image": "../images/Ultimate Kidney Bean Burger – Nutriciously.jpeg",
+    "description": "Packed with kidney beans, zesty spices, and a touch of lime.",
+    "price": 899,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.472Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.472Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184ac"
+    },
+    "name": "Black Coffee",
+    "category": "Coffee",
+    "image": "../images/blackCoffee.jpeg",
+    "description": "Strong and aromatic brew",
+    "price": 790,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184ad"
+    },
+    "name": "Cappuccino",
+    "category": "Coffee",
+    "image": "../images/cappuccino.jpeg",
+    "description": "Creamy coffee with froth",
+    "price": 400,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184ae"
+    },
+    "name": "Espresso Martini",
+    "category": "Coffee",
+    "image": "../images/Espresso Martini.jpeg",
+    "description": "Espresso with a twist",
+    "price": 600,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184af"
+    },
+    "name": "Cold Brew Coffee",
+    "category": "Coffee",
+    "image": "../images/Cold Brew Coffee.jpeg",
+    "description": "Smooth and refreshing drink",
+    "price": 750,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b0"
+    },
+    "name": "Latte Coffee",
+    "category": "Coffee",
+    "image": "../images/coffee latte cup.jpeg",
+    "description": "Rich and creamy delight",
+    "price": 450,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b1"
+    },
+    "name": "Mocha Latte",
+    "category": "Coffee",
+    "image": "../images/Mocha recipe.jpeg",
+    "description": "Coffee with chocolate flavor",
+    "price": 500,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b2"
+    },
+    "name": "Special Lotus Coffee",
+    "category": "Coffee",
+    "image": "../images/lotusCoffee.jpeg",
+    "description": "Infused with lotus biscuit",
+    "price": 700,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b3"
+    },
+    "name": "Turkish Coffee",
+    "category": "Coffee",
+    "image": "../images/Turkish Coffee.jpeg",
+    "description": "Traditional and flavorful cup",
+    "price": 800,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b4"
+    },
+    "name": "Chana Masala",
+    "category": "Traditionals",
+    "image": "../images/Chana Masala.jpeg",
+    "description": "Spicy and flavorful chickpea curry",
+    "price": 599,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b5"
+    },
+    "name": "Ramen Noodles",
+    "category": "Traditionals",
+    "image": "../images/Korean food ❤.jpeg",
+    "description": "Authentic Korean style ramen",
+    "price": 750,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b6"
+    },
+    "name": "Sambar Daal",
+    "category": "Traditionals",
+    "image": "../images/Sambar Wali Dal.jpeg",
+    "description": "Traditional South Indian lentil soup",
+    "price": 699,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b7"
+    },
+    "name": "Shahi Paneer",
+    "category": "Traditionals",
+    "image": "../images/Shahi Paneer.jpeg",
+    "description": "Paneer cooked in rich creamy gravy",
+    "price": 899,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b8"
+    },
+    "name": "Alfredo Pasta",
+    "category": "Traditionals",
+    "image": "../images/pasta.jpeg",
+    "description": "Creamy pasta with a cheesy twist",
+    "price": 1199,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184b9"
+    },
+    "name": "Saucy Momos",
+    "category": "Traditionals",
+    "image": "../images/Spicy momo.jpeg",
+    "description": "Steamed dumplings with spicy sauce",
+    "price": 750,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184ba"
+    },
+    "name": "Chicken with Rice",
+    "category": "Traditionals",
+    "image": "../images/Chicken rice.jpeg",
+    "description": "Grilled chicken served over rice",
+    "price": 1199,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184bb"
+    },
+    "name": "Chicken Biryani",
+    "category": "Traditionals",
+    "image": "../images/Chicken Biryani.jpeg",
+    "description": "Traditional Biryani with Raita",
+    "price": 499,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184bc"
+    },
+    "name": "Chocolate Cheese Tiramisu",
+    "category": "Desserts",
+    "image": "../images/ChocCheeseTiramisu.jpeg",
+    "description": "Rich chocolate with creamy layers",
+    "price": 1299,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184bd"
+    },
+    "name": "Coconut-Pistachio Baklava",
+    "category": "Desserts",
+    "image": "../images/Coconut and Pistachio Baklava.jpeg",
+    "description": "Flaky layers with nutty flavors",
+    "price": 1499,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184be"
+    },
+    "name": "Strawberry Vegan Cake",
+    "category": "Desserts",
+    "image": "../images/StrwVeganCake.jpeg",
+    "description": "Fresh strawberries and vegan delight",
+    "price": 1399,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184bf"
+    },
+    "name": "Macarons",
+    "category": "Desserts",
+    "image": "../images/macarons.jpeg",
+    "description": "Assorted flavors, crisp and chewy (Pack of 3)",
+    "price": 999,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c0"
+    },
+    "name": "Mithayi",
+    "category": "Desserts",
+    "image": "../images/Mithayi.jpeg",
+    "description": "Traditional sweets with a twist",
+    "price": 1699,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c1"
+    },
+    "name": "Strawberry Cream Tiramisu",
+    "category": "Desserts",
+    "image": "../images/StrwCreamTiramisu.jpeg",
+    "description": "Layers of strawberry and cream",
+    "price": 1499,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c2"
+    },
+    "name": "Donuts",
+    "category": "Desserts",
+    "image": "../images/Donuts.jpeg",
+    "description": "Pack of 4, glazed to perfection",
+    "price": 1799,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c3"
+    },
+    "name": "Cupcakes",
+    "category": "Desserts",
+    "image": "../images/Vegan Strawberry Lemon Cupcakes.jpeg",
+    "description": "Vegan strawberry with a hint of lemon",
+    "price": 1299,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c4"
+    },
+    "name": "BBQ Pizza",
+    "category": "Pizza",
+    "image": "../images/bbqPizza.jpeg",
+    "description": "With special BBQ sauce",
+    "price": 1599,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c5"
+    },
+    "name": "Beef Pizza Pie",
+    "category": "Pizza",
+    "image": "../images/Beef Pizza Pie.jpeg",
+    "description": "With double beef sides",
+    "price": 1699,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c6"
+    },
+    "name": "Pepproni Pizza",
+    "category": "Pizza",
+    "image": "../images/peproni.jpeg",
+    "description": "With extra cheese",
+    "price": 1299,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c7"
+    },
+    "name": "Cheese Pizza",
+    "category": "Pizza",
+    "image": "../images/cheesePizza.jpeg",
+    "description": "Special cheesy juicy pizza",
+    "price": 1299,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c8"
+    },
+    "name": "Chicken Fajita",
+    "category": "Pizza",
+    "image": "../images/grilled p.jpg",
+    "description": "With extra cheese slices",
+    "price": 1299,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184c9"
+    },
+    "name": "Mushroom Olives",
+    "category": "Pizza",
+    "image": "../images/mushroom p.jpg",
+    "description": "With extra cheese slices",
+    "price": 1299,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184ca"
+    },
+    "name": "Mini Pizzas",
+    "category": "Pizza",
+    "image": "../images/mini p.jpg",
+    "description": "Pack of 4",
+    "price": 1599,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6764574afa1ecc705f9184cb"
+    },
+    "name": "Chicken Onion",
+    "category": "Pizza",
+    "image": "../images/bbq p.jpg",
+    "description": "With extra cheese slices",
+    "price": 1299,
+    "createdAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-19T17:26:34.442Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "67687e236dca2408eb52c8fb"
+    },
+    "name": "tikka boti",
+    "category": "Traditionals",
+    "image": "/uploads/1734901283100.jpg",
+    "description": "tikka boti handi full plate",
+    "price": 1200,
+    "createdAt": {
+      "$date": "2024-12-22T21:01:23.186Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-22T21:01:23.186Z"
+    },
+    "__v": 0
+  },
+  {
+    "_id": {
+      "$oid": "6769b753cb8c8c85763d23cf"
+    },
+    "name": "Molten Lava Cake",
+    "category": "Desserts",
+    "image": "/uploads/1734981459856.jpg",
+    "description": "Perfect for chocolate lovers looking for a rich and indulgent dessert.",
+    "price": 4000,
+    "totalSold": 0,
+    "totalRevenue": 0,
+    "totalIncome": 0,
+    "createdAt": {
+      "$date": "2024-12-23T19:17:39.874Z"
+    },
+    "updatedAt": {
+      "$date": "2024-12-23T19:17:39.874Z"
+    },
+    "__v": 0
+  }]

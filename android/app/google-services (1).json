@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "656443622139",
+    "project_id": "book-it-up-53786",
+    "storage_bucket": "book-it-up-53786.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656443622139:android:05cc00d7a36c81716fa65e",
+        "android_client_info": {
+          "package_name": "com.example.book_it_up"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQNnkp9GkxnQ3YsMq5x_y-ahu8ATAG8KA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:656443622139:android:c18ee51c90b074326fa65e",
+        "android_client_info": {
+          "package_name": "com.mealtracker.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDQNnkp9GkxnQ3YsMq5x_y-ahu8ATAG8KA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
