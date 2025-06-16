@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:project/admin/admin_dashboard.dart';
 import 'package:project/components/my_button.dart';
 import 'package:project/components/my_textfield.dart';
 
@@ -58,12 +59,22 @@ class LoginPage extends StatelessWidget {
                     Fluttertoast.showToast(msg: "Please fill in all fields");
                     return;
                   }
+                  if (email == "admin@gmail.com") {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => RestaurantDashboard(),
+                      ),
+                    );
+                  }
 
                   try {
                     final UserCredential userCredential = await FirebaseAuth
                         .instance
                         .signInWithEmailAndPassword(
-                        email: email, password: password);
+                          email: email,
+                          password: password,
+                        );
 
                     print("✅ Logged in as: ${userCredential.user!.email}");
 

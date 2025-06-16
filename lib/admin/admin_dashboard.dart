@@ -1,44 +1,16 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-void main() => runApp(const RestaurantAdminApp());
+import 'admin_slider.dart';
 
-class RestaurantAdminApp extends StatelessWidget {
-  const RestaurantAdminApp({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color(0xFF1F1D2B),
-        textTheme: GoogleFonts.poppinsTextTheme(ThemeData.dark().textTheme),
-        cardColor: const Color(0xFF2A2D3E),
-        primaryColor: Colors.orangeAccent,
-      ),
-      home: const RestaurantDashboard(),
-    );
-  }
-}
 class RestaurantDashboard extends StatelessWidget {
   const RestaurantDashboard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: const AdminSidebar(),
-      appBar: AppBar(
-        title: const Text("🍽️ Dataflow Restaurant Dashboard"),
-        actions: [
-          IconButton(icon: const Icon(Icons.search), onPressed: () {}),
-          IconButton(
-            icon: const Icon(Icons.notifications_none),
-            onPressed: () {},
-          ),
-          const CircleAvatar(backgroundImage: AssetImage('assets/avatar.png')),
-          const SizedBox(width: 16),
-        ],
-      ),
+
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
@@ -218,51 +190,6 @@ class RestaurantDashboard extends StatelessWidget {
             style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class AdminSidebar extends StatelessWidget {
-  const AdminSidebar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: Container(
-        color: const Color(0xFF1F1D2B),
-        child: ListView(
-          children: [
-            const DrawerHeader(
-              child: Text(
-                "🍽️ Dataflow",
-                style: TextStyle(color: Colors.white, fontSize: 22),
-              ),
-            ),
-            ...[
-              "Home 01",
-              "Orders",
-              "Menu",
-              "Customers",
-              "Reservations",
-              "Inventory",
-              "Finance",
-              "Reviews",
-              "Staff",
-              "Settings",
-            ].map(
-              (e) => ListTile(
-                leading: const Icon(
-                  Icons.circle,
-                  size: 10,
-                  color: Colors.orangeAccent,
-                ),
-                title: Text(e, style: const TextStyle(color: Colors.white70)),
-                onTap: () {},
-              ),
-            ),
-          ],
-        ),
       ),
     );
   }

@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:project/screens/product_model.dart';
 import 'package:project/screens/product_screen.dart';
-
 
 class WishlistPage extends StatefulWidget {
   const WishlistPage({super.key});
@@ -25,9 +25,6 @@ class _WishlistPageState extends State<WishlistPage> {
           .collection('wishlist')
           .doc(docId)
           .delete();
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Removed from Wishlist')));
     } catch (e) {
       print('Error removing from wishlist: $e');
     }
@@ -44,9 +41,6 @@ class _WishlistPageState extends State<WishlistPage> {
           .collection('cart')
           .doc(productData['id'])
           .set(productData);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Added to Cart')));
     } catch (e) {
       print('Error adding to cart: $e');
     }
@@ -113,14 +107,15 @@ class _WishlistPageState extends State<WishlistPage> {
             itemBuilder: (context, index) {
               final doc = wishlistDocs[index];
               final data = doc.data() as Map<String, dynamic>;
-
+              final product = Product.fromJson(data);
               return GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
                     PageRouteBuilder(
                       transitionDuration: const Duration(milliseconds: 300),
-                      pageBuilder: (_, __, ___) => ProductDetailPage(product: data),
+                      pageBuilder:
+                          (_, __, ___) => ProductDetailPage(product: product),
                       transitionsBuilder: (_, animation, __, child) {
                         return FadeTransition(opacity: animation, child: child);
                       },
@@ -204,7 +199,6 @@ class _WishlistPageState extends State<WishlistPage> {
                   ),
                 ),
               );
-
             },
           );
         },

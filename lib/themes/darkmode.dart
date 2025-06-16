@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 ThemeData darkMode = ThemeData(
   colorScheme: ColorScheme.dark( //built in class dark color scheme
-    surface: const Color.fromARGB(255, 20, 20, 20),
-    primary: const Color.fromARGB(255, 122, 122, 122),
-    secondary: const Color.fromARGB(255, 30, 30, 30),
-    tertiary: const Color.fromARGB(255, 47, 47, 47),
-    inversePrimary: Colors.grey.shade300,
+    surface: Colors.black54,
+    primary:  Colors.red.shade900,
+    secondary: Colors.grey.shade500,
+    tertiary:Colors.grey.shade200,
+    inversePrimary: Colors.grey.shade200,
   ),
+  textTheme: GoogleFonts.poppinsTextTheme(),
 );

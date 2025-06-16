@@ -7,16 +7,17 @@ import 'package:project/screens/homepage.dart';
 import 'package:project/screens/login_page.dart';
 import 'package:project/themes/theme_provider.dart';
 import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform
-
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  print(
+    'Firebase initialized for: ${DefaultFirebaseOptions.currentPlatform.projectId}',
   );
-  print('Firebase initialized for: ${DefaultFirebaseOptions.currentPlatform.projectId}');
 
   // await uploadMealsToFirestore();
+  // await addDetailFieldToAllProducts();
   runApp(
     // You wrapped your app with a ChangeNotifierProvider (from the provider package).
     // It provides your ThemeProvider class to the whole app, so you can use it in any widget.

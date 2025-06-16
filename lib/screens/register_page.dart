@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:project/components/my_textfield.dart';
+import 'package:project/screens/login_page.dart';
 
 class RegisterPage extends StatefulWidget {
   final void Function()? onTap;
@@ -65,6 +66,12 @@ class _RegisterPageState extends State<RegisterPage> {
     } finally {
       setState(() => isLoading = false);
     }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginPage(onTap:() {}),
+      ),
+    );
   }
 
   void showMessage(String msg) {
