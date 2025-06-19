@@ -59,6 +59,21 @@ class _CartPageState extends State<CartPage> {
     return total;
   }
 
+  Widget _buildQuantityButton(IconData icon, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(15),
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: const BoxDecoration(
+          color: Color(0xFFEDEDED),
+          shape: BoxShape.circle,
+        ),
+        child: Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     if (user == null) {
@@ -127,70 +142,43 @@ class _CartPageState extends State<CartPage> {
                 ),
                 decoration: BoxDecoration(
                   color: customPrimaryColor,
-                  // Header ka background red.shade900 jaisa
-                  // No bottom border, because we want it to blend with the cards
                   borderRadius: const BorderRadius.vertical(
                     top: Radius.circular(15),
-                  ), // Thode rounded corners
+                  ),
                 ),
                 child: const Row(
                   children: [
-                    SizedBox(width: 80 + 16), // Image width + spacing
+                    SizedBox(width: 60 + 12), // Adjusted Image + spacing
                     Expanded(
                       flex: 3,
                       child: Text(
-                        'Menu Name',
+                        'Menu',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 13,
+                          fontSize: 12,
                           color: Colors.white,
-                        ), // Text color white
+                        ),
                       ),
                     ),
                     Expanded(
-                      flex: 1,
+                      flex: 3,
                       child: Text(
-                        'Price',
+                        'Details',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 13,
+                          fontSize: 12,
                           color: Colors.white,
-                        ), // Text color white
+                        ),
                         textAlign: TextAlign.center,
                       ),
                     ),
-                    Expanded(
-                      flex: 2,
-                      child: Text(
-                        'Quantity',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          color: Colors.white,
-                        ), // Text color white
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                    Expanded(
-                      flex: 1,
-                      child: Text(
-                        'Total',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                          color: Colors.white,
-                        ), // Text color white
-                        textAlign: TextAlign.end,
-                      ),
-                    ),
-                    SizedBox(width: 48), // For Remove button icon size
+                    SizedBox(width: 40), // For delete icon
                   ],
                 ),
               ),
               Expanded(
                 child: ListView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  // Horizontal padding for list items
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   itemCount: cartDocs.length,
                   itemBuilder: (context, index) {
                     final doc = cartDocs[index];
@@ -200,42 +188,39 @@ class _CartPageState extends State<CartPage> {
                     final itemTotal = itemPrice * quantity;
 
                     return Container(
-                      margin: const EdgeInsets.only(bottom: 12, top: 5),
-                      // Added small top margin for spacing from header
+                      margin: const EdgeInsets.symmetric(vertical: 8),
                       decoration: BoxDecoration(
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(15),
+                        borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: Colors.black.withValues(blue: 0.1),
-                            // Decent, subtle shadow
-                            blurRadius: 3,
-                            offset: const Offset(0, 1),
+                            color: Colors.black.withOpacity(0.05),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
                           ),
                         ],
                       ),
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                          horizontal: 12,
+                          vertical: 10,
+                          horizontal: 10,
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Menu Image
+                            // Rounded Image
                             ClipRRect(
                               borderRadius: BorderRadius.circular(50),
-                              // Image ke corners thode rounded
                               child: Image.network(
                                 data['image'] ??
-                                    'https://via.placeholder.com/80',
-                                width: 80,
-                                height: 80,
+                                    'https://via.placeholder.com/60',
+                                width: 60,
+                                height: 60,
                                 fit: BoxFit.cover,
                                 errorBuilder:
                                     (context, error, stackTrace) => Container(
-                                      width: 80,
-                                      height: 80,
+                                      width: 60,
+                                      height: 60,
                                       color: Colors.grey[200],
                                       child: const Icon(
                                         Icons.broken_image,
@@ -244,126 +229,96 @@ class _CartPageState extends State<CartPage> {
                                     ),
                               ),
                             ),
-                            const SizedBox(width: 16),
-                            // Menu Name (Expanded)
+                            const SizedBox(width: 10),
+
+                            // Name and Quantity Controls
                             Expanded(
                               flex: 3,
-                              child: Text(
-                                data['title'] ?? 'N/A',
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 15,
-                                  color:
-                                      Colors.black87, // Slightly softer black
-                                ),
-                              ),
-                            ),
-                            // Price
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                "Rs ${itemPrice.toStringAsFixed(0)}",
-                                // Rs sign with price
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                ),
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            // Quantity Controls
-                            Expanded(
-                              flex: 2,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  InkWell(
-                                    onTap: () {
-                                      if (quantity > 1) {
+                                  Text(
+                                    data['title'] ?? 'N/A',
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                      color: Colors.black87,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
+                                  ),
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      _buildQuantityButton(Icons.remove, () {
+                                        if (quantity > 1) {
+                                          updateQuantity(
+                                            doc.id,
+                                            quantity - 1,
+                                            data,
+                                          );
+                                        }
+                                      }),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 8,
+                                        ),
+                                        child: Text(
+                                          '$quantity',
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black87,
+                                          ),
+                                        ),
+                                      ),
+                                      _buildQuantityButton(Icons.add, () {
                                         updateQuantity(
                                           doc.id,
-                                          quantity - 1,
+                                          quantity + 1,
                                           data,
                                         );
-                                      }
-                                    },
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        // Quantity buttons background
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.remove,
-                                        size: 18,
-                                        color: customPrimaryColor,
-                                      ), // Icon color
+                                      }),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Price & Total
+                            Expanded(
+                              flex: 3,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    "Rs ${itemPrice.toStringAsFixed(0)}",
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
                                     ),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 10,
-                                    ),
-                                    child: Text(
-                                      '$quantity',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      updateQuantity(
-                                        doc.id,
-                                        quantity + 1,
-                                        data,
-                                      );
-                                    },
-                                    borderRadius: BorderRadius.circular(15),
-                                    child: Container(
-                                      padding: const EdgeInsets.all(6),
-                                      decoration: BoxDecoration(
-                                        color: Colors.grey[200],
-                                        // Quantity buttons background
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: Icon(
-                                        Icons.add,
-                                        size: 18,
-                                        color: customPrimaryColor,
-                                      ), // Icon color
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    "Rs ${itemTotal.toStringAsFixed(0)}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: customAccentColor,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                            // Item Total
-                            Expanded(
-                              flex: 1,
-                              child: Text(
-                                "Rs ${itemTotal.toStringAsFixed(0)}",
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  fontWeight: FontWeight.bold,
-                                  color:
-                                      customAccentColor, // Highlight total with accent color
-                                ),
-                                textAlign: TextAlign.end,
-                              ),
-                            ),
-                            // Remove Button
+
+                            // Delete Button
                             IconButton(
                               icon: const Icon(
                                 Icons.delete_outline,
                                 color: Colors.red,
-                                size: 24,
-                              ), // Red color for delete
+                                size: 20,
+                              ),
                               onPressed: () => removeFromCart(doc.id),
-                              tooltip: 'Remove item',
                             ),
                           ],
                         ),
@@ -372,6 +327,7 @@ class _CartPageState extends State<CartPage> {
                   },
                 ),
               ),
+
               // Grand Total and Checkout Button
               Container(
                 padding: const EdgeInsets.all(20),

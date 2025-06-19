@@ -9,5 +9,5 @@ ThemeData lightMode = ThemeData(
     tertiary: Colors.black,
     inversePrimary: Colors.redAccent.shade100,
   ),
-  textTheme: GoogleFonts.ralewayTextTheme(),
+  textTheme: GoogleFonts.poppinsTextTheme(),
 );

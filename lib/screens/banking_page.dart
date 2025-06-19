@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:project/screens/reciept_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:project/screens/reciept_screen.dart';
 
 class BankingDetailsPage extends StatefulWidget {
-  final Map<String, dynamic> orderDetails;
+  final String orderId;
+  final double finalTotal;
 
-  const BankingDetailsPage({Key? key, required this.orderDetails})
-    : super(key: key);
+  const BankingDetailsPage({
+    Key? key,
+    required this.orderId,
+    required this.finalTotal,
+  }) : super(key: key);
 
   @override
   State<BankingDetailsPage> createState() => _BankingDetailsPageState();
 }
 
 class _BankingDetailsPageState extends State<BankingDetailsPage> {
-  // Example banking details (replace with your actual details)
   final String accountNumber = "1234567890123456";
   final String bankName = "Example Bank Ltd.";
   final String accountTitle = "BookItUp Payments";
@@ -24,7 +27,6 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
   final Color customPrimaryColor = Colors.red.shade900;
   final Color pageBackgroundColor = Colors.white;
 
-  // Controllers for user input banking details
   final TextEditingController _transactionIdController =
       TextEditingController();
   final TextEditingController _senderAccountNameController =
@@ -44,17 +46,17 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
 
   Widget _buildDetailRow(String label, String value, BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label, style: const TextStyle(fontSize: 16, color: Colors.grey)),
+          Text(label, style: const TextStyle(fontSize: 13, color: Colors.grey)),
           Row(
             children: [
               Text(
                 value,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontWeight: FontWeight.bold,
                 ),
               ),
@@ -62,7 +64,7 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
               IconButton(
                 icon: Icon(
                   Icons.copy,
-                  size: 20,
+                  size: 18,
                   color: Theme.of(context).primaryColor,
                 ),
                 onPressed: () {
@@ -81,57 +83,42 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
 
   Future<void> _confirmPayment() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-
-      // Retrieve order ID
-      final String? orderId = widget.orderDetails['orderId'];
-
-      if (orderId == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Error: Order ID not found. Cannot confirm payment.'),
-          ),
-        );
-        return;
-      }
-
       try {
-        // Update order in Firestore with banking details and status
-        await FirebaseFirestore.instance
+        final docRef = FirebaseFirestore.instance
             .collection('orders')
-            .doc(orderId)
-            .update({
-              'paymentDetails': {
-                'transactionId': _transactionIdController.text.trim(),
-                'senderAccountName': _senderAccountNameController.text.trim(),
-                'senderBankName': _senderBankNameController.text.trim(),
-                'confirmationTimestamp': FieldValue.serverTimestamp(),
-                // When user confirmed payment
-              },
-              'orderStatus': 'Payment Confirmed', // Or 'Awaiting Verification'
-            });
+            .doc(widget.orderId);
 
-        // Create a copy of orderDetails and add the new paymentDetails
-        final Map<String, dynamic> updatedOrderDetails = Map.from(
-          widget.orderDetails,
-        );
-        updatedOrderDetails['paymentDetails'] = {
-          'transactionId': _transactionIdController.text.trim(),
-          'senderAccountName': _senderAccountNameController.text.trim(),
-          'senderBankName': _senderBankNameController.text.trim(),
-            };
-        updatedOrderDetails['orderStatus'] = 'Payment Confirmed';
+        // 🔄 Step 1: Update payment status & details
+        await docRef.update({
+          'paymentDetails': {
+            'transactionId': _transactionIdController.text.trim(),
+            'senderAccountName': _senderAccountNameController.text.trim(),
+            'senderBankName': _senderBankNameController.text.trim(),
+            'confirmationTimestamp': FieldValue.serverTimestamp(),
+          },
+          'orderStatus': 'Payment Confirmed',
+        });
 
-        // Navigate to the ReceiptPage, passing the updated order details
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder:
-                (context) => ReceiptPage(orderDetails: updatedOrderDetails),
-          ),
-        );
+        // 📦 Step 2: Fetch full updated document
+        final snapshot = await docRef.get();
+        final fullData = snapshot.data();
+
+        if (fullData != null) {
+          // 🧩 Step 3: Inject orderId into the data map
+          fullData['orderId'] = snapshot.id;
+
+          // 🚀 Step 4: Navigate to ReceiptPage with complete data
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (_) => ReceiptPage(orderDetails: fullData),
+            ),
+          );
+        } else {
+          throw Exception('Failed to load order data after update');
+        }
       } catch (e) {
-        print("Error confirming payment and updating order: $e");
+        print("Error confirming payment: $e");
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Failed to confirm payment: $e")),
         );
@@ -139,12 +126,16 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
     }
   }
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: pageBackgroundColor,
       appBar: AppBar(
-        title: const Text('Banking Details for Payment'),
+        title: const Text(
+          'Banking Details for Payment',
+          style: TextStyle(fontSize: 15),
+        ),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
@@ -156,38 +147,38 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Card(
-              elevation: 4,
+              elevation: 2,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       'Please transfer the amount to the following bank details:',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: customPrimaryColor,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
                     _buildDetailRow('Bank Name:', bankName, context),
                     _buildDetailRow('Account Title:', accountTitle, context),
                     _buildDetailRow('Account Number:', accountNumber, context),
                     _buildDetailRow('IBAN:', iban, context),
                     _buildDetailRow('SWIFT Code:', swiftCode, context),
                     const Divider(
-                      height: 30,
+                      height: 24,
                       thickness: 1.0,
                       color: Colors.grey,
                     ),
                     Text(
                       'Total Amount to Pay:',
                       style: TextStyle(
-                        fontSize: 20,
+                        fontSize: 14,
                         fontWeight: FontWeight.bold,
                         color: customPrimaryColor,
                       ),
@@ -195,34 +186,32 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
                     const SizedBox(height: 10),
                     Center(
                       child: Text(
-                        'Rs ${widget.orderDetails['finalTotal']?.toStringAsFixed(2) ?? '0.00'}',
+                        'Rs ${widget.finalTotal.toStringAsFixed(2)}',
                         style: TextStyle(
-                          fontSize: 32,
+                          fontSize: 22,
                           fontWeight: FontWeight.bold,
                           color: customPrimaryColor,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 16),
                     Text(
                       'Important: After making the transfer, please fill in the details below to confirm your payment.',
-                      style: const TextStyle(fontSize: 14, color: Colors.grey),
+                      style: const TextStyle(fontSize: 13, color: Colors.grey),
                       textAlign: TextAlign.center,
                     ),
                   ],
                 ),
               ),
             ),
-            const SizedBox(height: 30),
-
-            // User input for banking details
+            const SizedBox(height: 24),
             Card(
-              elevation: 4,
+              elevation: 2,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
-                padding: const EdgeInsets.all(20.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -231,14 +220,15 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
                       Text(
                         'Your Payment Details (for confirmation):',
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: customPrimaryColor,
                         ),
                       ),
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 12),
                       TextFormField(
                         controller: _transactionIdController,
+                        style: const TextStyle(fontSize: 14),
                         decoration: InputDecoration(
                           labelText: 'Transaction ID / Reference No.',
                           hintText:
@@ -252,7 +242,7 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
                             borderSide: BorderSide.none,
                           ),
                           filled: true,
-                          fillColor: Colors.grey[50],
+                          fillColor: Colors.grey[100],
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -261,9 +251,10 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 12),
                       TextFormField(
                         controller: _senderAccountNameController,
+                        style: const TextStyle(fontSize: 14),
                         decoration: InputDecoration(
                           labelText: 'Your Account Name',
                           hintText: 'e.g., John Doe (as per your bank account)',
@@ -276,7 +267,7 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
                             borderSide: BorderSide.none,
                           ),
                           filled: true,
-                          fillColor: Colors.grey[50],
+                          fillColor: Colors.grey[100],
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -285,9 +276,10 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
                           return null;
                         },
                       ),
-                      const SizedBox(height: 15),
+                      const SizedBox(height: 12),
                       TextFormField(
                         controller: _senderBankNameController,
+                        style: const TextStyle(fontSize: 14),
                         decoration: InputDecoration(
                           labelText: 'Your Bank Name',
                           hintText: 'e.g., ABC Bank',
@@ -300,7 +292,7 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
                             borderSide: BorderSide.none,
                           ),
                           filled: true,
-                          fillColor: Colors.grey[50],
+                          fillColor: Colors.grey[100],
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -314,24 +306,22 @@ class _BankingDetailsPageState extends State<BankingDetailsPage> {
                 ),
               ),
             ),
-            const SizedBox(height: 30),
-
+            const SizedBox(height: 24),
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
                 onPressed: _confirmPayment,
-                // Call the new confirm payment method
                 style: ElevatedButton.styleFrom(
                   backgroundColor: customPrimaryColor,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                  elevation: 8,
+                  elevation: 4,
                 ),
                 child: const Text(
                   'Confirm Payment & Get Receipt',
-                  style: TextStyle(fontSize: 18, color: Colors.white),
+                  style: TextStyle(fontSize: 15, color: Colors.white),
                 ),
               ),
             ),

@@ -1,17 +1,25 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:project/admin/admin_dashboard.dart';
 import 'package:project/components/my_button.dart';
 import 'package:project/components/my_textfield.dart';
 
-class LoginPage extends StatelessWidget {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-
+@override
+class LoginPage extends StatefulWidget {
   final void Function()? onTap;
 
   LoginPage({super.key, required this.onTap});
+
+  @override
+  State<LoginPage> createState() => _LoginPage();
+}
+
+@override
+class _LoginPage extends State<LoginPage> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -26,14 +34,14 @@ class LoginPage extends StatelessWidget {
               Icon(
                 Icons.lock_open_rounded,
                 size: 100,
-                color: Theme.of(context).colorScheme.inversePrimary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(height: 25),
               Text(
                 "Welcome back, foodie!",
                 style: TextStyle(
                   fontSize: 20,
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 25),
@@ -43,11 +51,31 @@ class LoginPage extends StatelessWidget {
                 obscureText: false,
               ),
               const SizedBox(height: 10),
-              MyTextField(
+              // MyTextField(
+              //   controller: passwordController,
+              //   hintText: "Password",
+              //   obscureText: true,
+              // ),
+              TextField(
                 controller: passwordController,
-                hintText: "Password",
-                obscureText: true,
+                obscureText: !_isPasswordVisible,
+                decoration: InputDecoration(
+                  hintText: "Confirm Password",
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
               ),
+
               const SizedBox(height: 20),
               MyButton(
                 text: "Sign In",
@@ -59,14 +87,7 @@ class LoginPage extends StatelessWidget {
                     Fluttertoast.showToast(msg: "Please fill in all fields");
                     return;
                   }
-                  if (email == "admin@gmail.com") {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => RestaurantDashboard(),
-                      ),
-                    );
-                  }
+
 
                   try {
                     final UserCredential userCredential = await FirebaseAuth

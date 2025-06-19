@@ -136,8 +136,6 @@ class _HomePageState extends State<HomePage> {
     final double? priceSearchValue = double.tryParse(queryText);
     bool isNumericSearch = priceSearchValue != null;
 
-    // 1. Category Filter: Agar 'Popular' nahi hai, to category filter lagao
-    // Yeh filter sirf ek baar lagna chahiye.
     if (selectedCategory != 'Popular') {
       collectionRef = collectionRef.where(
         'category',
@@ -145,16 +143,12 @@ class _HomePageState extends State<HomePage> {
       );
     }
 
-    // 2. Search Query: Ab search criteria apply karo
     if (queryText.isNotEmpty) {
       if (isNumericSearch) {
-        // Price search
         collectionRef = collectionRef.where(
           'price',
           isEqualTo: priceSearchValue,
         );
-        // Price search ke saath order by price bhi ho sakta hai agar zaroori ho
-        // collectionRef = collectionRef.orderBy('price'); // Agar aapko prices sort bhi karni hain
       } else {
         // Text-based search (title)
         collectionRef = collectionRef

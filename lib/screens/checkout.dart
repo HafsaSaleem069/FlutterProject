@@ -7,8 +7,7 @@ import 'package:project/screens/reciept_screen.dart';
 import 'banking_page.dart';
 
 class CheckoutPage extends StatefulWidget {
-  final List<QueryDocumentSnapshot>
-  cartItems; // CartPage se items yahan aayengi
+  final List<QueryDocumentSnapshot> cartItems;
   final double subtotal;
 
   const CheckoutPage({
@@ -25,27 +24,25 @@ class _CheckoutPageState extends State<CheckoutPage> {
   final _formKey = GlobalKey<FormState>();
   final user = FirebaseAuth.instance.currentUser;
 
-  // Form Controllers
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _addressController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
 
-  String? _selectedPaymentMethod; // Cash on Delivery or Card
+  String? _selectedPaymentMethod;
 
-  // Colors from previous chat's aesthetic
   final Color customPrimaryColor = Colors.red.shade900;
   final Color customAccentColor = Colors.deepOrange;
   final Color pageBackgroundColor = Colors.white;
 
-  double deliveryFee = 250.0; // Example delivery fee
+  double deliveryFee = 250.0;
   double finalTotal = 0.0;
 
   @override
   void initState() {
     super.initState();
     finalTotal = widget.subtotal + deliveryFee;
-    _loadUserDetails(); // Load saved user details if available
+    _loadUserDetails();
   }
 
   @override
@@ -57,15 +54,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
     super.dispose();
   }
 
-  // User details load karein (Agar pehle save kiye hain)
   Future<void> _loadUserDetails() async {
     if (user != null) {
       try {
-        final userDoc =
-            await FirebaseFirestore.instance
-                .collection('users')
-                .doc(user!.uid)
-                .get();
+        final userDoc = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .get();
         if (userDoc.exists) {
           _nameController.text = userDoc.data()?['name'] ?? '';
           _addressController.text = userDoc.data()?['address'] ?? '';
@@ -78,7 +73,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
   }
 
-  // User details save karein
   Future<void> _saveUserDetails() async {
     if (user != null) {
       try {
@@ -86,21 +80,20 @@ class _CheckoutPageState extends State<CheckoutPage> {
             .collection('users')
             .doc(user!.uid)
             .set({
-              'name': _nameController.text.trim(),
-              'address': _addressController.text.trim(),
-              'phone': _phoneController.text.trim(),
-              'email': _emailController.text.trim(),
-            }, SetOptions(merge: true)); // Existing data ko overwrite na karein
+          'name': _nameController.text.trim(),
+          'address': _addressController.text.trim(),
+          'phone': _phoneController.text.trim(),
+          'email': _emailController.text.trim(),
+        }, SetOptions(merge: true));
       } catch (e) {
         print("Error saving user details: $e");
       }
     }
   }
 
-  // Order Place karne ka logic
   Future<void> _placeOrder() async {
     if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save(); // Form fields ko save karein
+      _formKey.currentState!.save();
 
       if (_selectedPaymentMethod == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -109,10 +102,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
         return;
       }
 
-      await _saveUserDetails(); // User details save karein order se pehle
+      await _saveUserDetails();
 
       try {
-        // Order data tayyar karein
         List<Map<String, dynamic>> items = [];
         for (var itemDoc in widget.cartItems) {
           final data = itemDoc.data() as Map<String, dynamic>;
@@ -123,14 +115,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
             'price': (data['price'] as num).toDouble(),
             'quantity': (data['quantity'] ?? 1) as int,
             'total_item_price':
-                ((data['price'] as num).toDouble() * (data['quantity'] ?? 1)),
-            // Removed 'as int' cast here, as total_item_price is a double.
+            ((data['price'] as num).toDouble() * (data['quantity'] ?? 1)),
           });
         }
 
-        // 1. Order ko Firestore mein add karein
-        DocumentReference
-        docRef = await FirebaseFirestore.instance.collection('orders').add({
+        DocumentReference docRef = await FirebaseFirestore.instance
+            .collection('orders')
+            .add({
           'userId': user!.uid,
           'customerName': _nameController.text.trim(),
           'deliveryAddress': _addressController.text.trim(),
@@ -142,15 +133,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
           'finalTotal': finalTotal,
           'paymentMethod': _selectedPaymentMethod,
           'orderStatus': 'Pending',
-          'timestamp': FieldValue.serverTimestamp(), // Firestore will set this
+          'timestamp': FieldValue.serverTimestamp(),
         });
 
-        // 2. Newly created document ko dobara fetch karein to get the actual server-generated timestamp
         DocumentSnapshot orderSnapshot = await docRef.get();
         Map<String, dynamic> actualOrderData =
-            orderSnapshot.data() as Map<String, dynamic>;
+        orderSnapshot.data() as Map<String, dynamic>;
 
-        // Cart ko clear karein order place hone ke baad
         WriteBatch batch = FirebaseFirestore.instance.batch();
         for (var itemDoc in widget.cartItems) {
           batch.delete(
@@ -163,10 +152,8 @@ class _CheckoutPageState extends State<CheckoutPage> {
         }
         await batch.commit();
 
-        // 3. Order details ko ReceiptPage ko pass karne ke liye ek Map banayein
         Map<String, dynamic> orderDetailsForReceipt = {
           'orderId': docRef.id,
-          // Firestore document ID
           'customerName': actualOrderData['customerName'],
           'deliveryAddress': actualOrderData['deliveryAddress'],
           'phoneNumber': actualOrderData['phoneNumber'],
@@ -177,18 +164,14 @@ class _CheckoutPageState extends State<CheckoutPage> {
           'deliveryFee': actualOrderData['deliveryFee'],
           'finalTotal': actualOrderData['finalTotal'],
           'timestamp': actualOrderData['timestamp'],
-          // This will now be a proper Timestamp
         };
 
-        // --- CORRECTED LOGIC: Conditional Navigation based on Payment Method ---
         if (_selectedPaymentMethod == 'COD') {
-          // If Cash on Delivery, go directly to ReceiptPage
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder:
-                  (context) =>
-                      ReceiptPage(orderDetails: orderDetailsForReceipt),
+              builder: (context) =>
+                  ReceiptPage(orderDetails: orderDetailsForReceipt),
             ),
           );
           ScaffoldMessenger.of(context).showSnackBar(
@@ -197,13 +180,13 @@ class _CheckoutPageState extends State<CheckoutPage> {
             ),
           );
         } else {
-          // If Card payment, navigate to BankingDetailsPage
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder:
-                  (context) =>
-                      BankingDetailsPage(orderDetails: orderDetailsForReceipt),
+              builder: (context) => BankingDetailsPage(
+                orderId: docRef.id,
+                finalTotal: finalTotal,
+              ),
             ),
           );
           ScaffoldMessenger.of(context).showSnackBar(
@@ -212,9 +195,9 @@ class _CheckoutPageState extends State<CheckoutPage> {
         }
       } catch (e) {
         print("Error placing order: $e");
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text("Failed to place order: $e")));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Failed to place order: $e")),
+        );
       }
     }
   }
@@ -225,7 +208,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
       return Scaffold(
         appBar: AppBar(
           title: const Text('Checkout'),
-          backgroundColor: customPrimaryColor, // Consistent color
+          backgroundColor: customPrimaryColor,
           foregroundColor: Colors.white,
         ),
         body: const Center(child: Text('Please log in to place an order.')),
@@ -233,13 +216,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
     }
 
     return Scaffold(
-      backgroundColor: pageBackgroundColor, // Page ka background color
+      backgroundColor: pageBackgroundColor,
       appBar: AppBar(
         title: const Text('Checkout'),
         centerTitle: true,
         elevation: 0,
         backgroundColor: Colors.transparent,
-        // Transparent AppBar
         foregroundColor: Colors.black,
       ),
       body: SingleChildScrollView(
@@ -247,37 +229,23 @@ class _CheckoutPageState extends State<CheckoutPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // --- Billing Information Form ---
             _buildSectionTitle('Billing Information'),
-            // This requires _buildSectionTitle
             _buildBillingForm(),
             const SizedBox(height: 20),
-
-            // --- Order Summary ---
             _buildSectionTitle('Your Order Summary'),
-            // This requires _buildSectionTitle
             _buildOrderSummaryTable(),
             const SizedBox(height: 20),
-
-            // --- Payment Method ---
             _buildSectionTitle('Payment Method'),
-            // This requires _buildSectionTitle
             _buildPaymentMethodSelection(),
             const SizedBox(height: 40),
-
-            // --- Final Total and Place Order Button ---
             _buildFinalTotalAndCheckoutButton(),
             const SizedBox(height: 20),
-            // Bottom space
           ],
         ),
       ),
     );
   }
 
-  // --- Helper Widgets for UI Sections (Re-added/Confirmed in this file) ---
-
-  // Re-added: This method is used by the CheckoutPage's UI sections.
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0, top: 10.0),
@@ -286,13 +254,12 @@ class _CheckoutPageState extends State<CheckoutPage> {
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: customPrimaryColor, // Section titles ka color primary
+          color: customPrimaryColor,
         ),
       ),
     );
   }
 
-  // Confirmed: These helper methods should also be in _CheckoutPageState
   Widget _buildBillingForm() {
     return Card(
       elevation: 4,
@@ -306,22 +273,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
             children: [
               _buildTextFormField(_nameController, 'Full Name', Icons.person),
               _buildTextFormField(
-                _addressController,
-                'Delivery Address',
-                Icons.location_on,
-              ),
-              _buildTextFormField(
-                _phoneController,
-                'Phone Number',
-                Icons.phone,
-                keyboardType: TextInputType.phone,
-              ),
-              _buildTextFormField(
-                _emailController,
-                'Email',
-                Icons.email,
-                keyboardType: TextInputType.emailAddress,
-              ),
+                  _addressController, 'Delivery Address', Icons.location_on),
+              _buildTextFormField(_phoneController, 'Phone Number', Icons.phone,
+                  keyboardType: TextInputType.phone),
+              _buildTextFormField(_emailController, 'Email', Icons.email,
+                  keyboardType: TextInputType.emailAddress),
             ],
           ),
         ),
@@ -330,11 +286,11 @@ class _CheckoutPageState extends State<CheckoutPage> {
   }
 
   Widget _buildTextFormField(
-    TextEditingController controller,
-    String label,
-    IconData icon, {
-    TextInputType keyboardType = TextInputType.text,
-  }) {
+      TextEditingController controller,
+      String label,
+      IconData icon, {
+        TextInputType keyboardType = TextInputType.text,
+      }) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
       child: TextFormField(
@@ -348,7 +304,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
             borderSide: BorderSide.none,
           ),
           filled: true,
-          fillColor: Colors.grey[50], // Light fill color
+          fillColor: Colors.grey[50],
         ),
         validator: (value) {
           if (value == null || value.isEmpty) {
@@ -368,7 +324,7 @@ class _CheckoutPageState extends State<CheckoutPage> {
         padding: const EdgeInsets.all(15.0),
         child: Column(
           children: [
-            // Table Header
+            // Table header
             Container(
               padding: const EdgeInsets.symmetric(vertical: 10.0),
               decoration: BoxDecoration(
@@ -376,59 +332,17 @@ class _CheckoutPageState extends State<CheckoutPage> {
               ),
               child: Row(
                 children: [
-                  const SizedBox(width: 60), // Image ke liye space
-                  const Expanded(
-                    flex: 3,
-                    child: Text(
-                      'Product Name',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Price',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Qty',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: Text(
-                      'Total',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 13,
-                      ),
-                      textAlign: TextAlign.end,
-                    ),
-                  ),
+                  const SizedBox(width: 60),
+                  const Expanded(flex: 3, child: Text('Product Name')),
+                  const Expanded(flex: 1, child: Text('Price', textAlign: TextAlign.center)),
+                  const Expanded(flex: 1, child: Text('Qty', textAlign: TextAlign.center)),
+                  const Expanded(flex: 1, child: Text('Total', textAlign: TextAlign.end)),
                 ],
               ),
             ),
-            // Cart Items
             ListView.builder(
               shrinkWrap: true,
-              // List ko Column ke andar fit karne ke liye
               physics: const NeverScrollableScrollPhysics(),
-              // Apna scroll na kare
               itemCount: widget.cartItems.length,
               itemBuilder: (context, index) {
                 final itemDoc = widget.cartItems[index];
@@ -444,77 +358,31 @@ class _CheckoutPageState extends State<CheckoutPage> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.network(
-                          data['image'] ?? 'https://via.placeholder.com/50',
+                          data['image'] ?? '',
                           width: 50,
                           height: 50,
                           fit: BoxFit.cover,
-                          errorBuilder:
-                              (context, error, stackTrace) => Container(
-                                width: 50,
-                                height: 50,
-                                color: Colors.grey[200],
-                                child: const Icon(
-                                  Icons.broken_image,
-                                  size: 20,
-                                  color: Colors.grey,
-                                ),
-                              ),
+                          errorBuilder: (context, error, stackTrace) => Container(
+                            width: 50,
+                            height: 50,
+                            color: Colors.grey[200],
+                            child: const Icon(Icons.broken_image, size: 20),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          data['title'] ?? 'N/A',
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          'Rs ${itemPrice.toStringAsFixed(0)}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            color: Colors.grey,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          '$quantity',
-                          style: const TextStyle(fontSize: 14),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                      Expanded(
-                        flex: 1,
-                        child: Text(
-                          'Rs ${itemTotal.toStringAsFixed(0)}',
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.bold,
-                            color: customAccentColor,
-                          ),
-                          textAlign: TextAlign.end,
-                        ),
-                      ),
+                      Expanded(flex: 3, child: Text(data['title'] ?? 'N/A')),
+                      Expanded(flex: 1, child: Text('Rs ${itemPrice.toStringAsFixed(0)}', textAlign: TextAlign.center)),
+                      Expanded(flex: 1, child: Text('$quantity', textAlign: TextAlign.center)),
+                      Expanded(flex: 1, child: Text('Rs ${itemTotal.toStringAsFixed(0)}', textAlign: TextAlign.end, style: TextStyle(color: customAccentColor, fontWeight: FontWeight.bold))),
                     ],
                   ),
                 );
               },
             ),
-            const Divider(height: 30, thickness: 1.0, color: Colors.grey),
-            // Order summary divider
-            _buildPriceRow(
-              'Subtotal:',
-              'Rs ${widget.subtotal.toStringAsFixed(2)}',
-            ),
-            _buildPriceRow(
-              'Delivery Fee:',
-              'Rs ${deliveryFee.toStringAsFixed(2)}',
-            ),
+            const Divider(height: 30),
+            _buildPriceRow('Subtotal:', 'Rs ${widget.subtotal.toStringAsFixed(2)}'),
+            _buildPriceRow('Delivery Fee:', 'Rs ${deliveryFee.toStringAsFixed(2)}'),
           ],
         ),
       ),
@@ -528,7 +396,6 @@ class _CheckoutPageState extends State<CheckoutPage> {
       child: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RadioListTile<String>(
               title: const Text('Cash on Delivery'),
@@ -574,32 +441,18 @@ class _CheckoutPageState extends State<CheckoutPage> {
       ),
       child: Column(
         children: [
-          _buildPriceRow(
-            'Total:',
-            'Rs ${finalTotal.toStringAsFixed(2)}',
-            isTotal: true,
-          ),
+          _buildPriceRow('Total:', 'Rs ${finalTotal.toStringAsFixed(2)}', isTotal: true),
           const SizedBox(height: 25),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
               onPressed: _placeOrder,
-              icon: const Icon(
-                FontAwesomeIcons.solidCreditCard,
-                size: 20,
-                color: Colors.white,
-              ),
-              label: const Text(
-                'Place Order',
-                style: TextStyle(fontSize: 18, color: Colors.white),
-              ),
+              icon: const Icon(FontAwesomeIcons.solidCreditCard, color: Colors.white),
+              label: const Text('Place Order', style: TextStyle(fontSize: 18, color: Colors.white)),
               style: ElevatedButton.styleFrom(
                 backgroundColor: customPrimaryColor,
                 padding: const EdgeInsets.symmetric(vertical: 15),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(15),
-                ),
-                elevation: 8,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
               ),
             ),
           ),

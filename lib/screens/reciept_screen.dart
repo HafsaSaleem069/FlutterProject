@@ -1,23 +1,18 @@
 // lib/screens/receipt_page.dart
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:project/screens/homepage.dart';
-
 import 'mainLayout.dart';
 
 class ReceiptPage extends StatelessWidget {
-  // Order details ko Map ke format mein receive karein
   final Map<String, dynamic> orderDetails;
 
   ReceiptPage({super.key, required this.orderDetails});
 
-  // Colors consistent with the previous theme
   final Color customPrimaryColor = Colors.red.shade900;
   final Color customAccentColor = Colors.deepOrange;
   final Color pageBackgroundColor = Colors.grey[100]!;
 
-  // Helper for section titles (reused from CheckoutPage)
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0, top: 10.0),
@@ -32,7 +27,6 @@ class ReceiptPage extends StatelessWidget {
     );
   }
 
-  // Helper for detail rows (reused from CheckoutPage)
   Widget _buildReceiptDetailRow(String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -41,11 +35,10 @@ class ReceiptPage extends StatelessWidget {
         children: [
           Text(label, style: const TextStyle(fontSize: 15, color: Colors.grey)),
           Expanded(
-            // Use Expanded to prevent overflow for long values
             child: Text(
               value,
               style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-              textAlign: TextAlign.end, // Align text to the end
+              textAlign: TextAlign.end,
             ),
           ),
         ],
@@ -53,7 +46,6 @@ class ReceiptPage extends StatelessWidget {
     );
   }
 
-  // Helper for price rows (reused from CheckoutPage)
   Widget _buildReceiptPriceRow(
     String label,
     String value, {
@@ -87,7 +79,6 @@ class ReceiptPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Order details se data extract karein
     final String orderId = orderDetails['orderId'] ?? 'N/A';
     final String customerName = orderDetails['customerName'] ?? 'N/A';
     final String deliveryAddress = orderDetails['deliveryAddress'] ?? 'N/A';
@@ -151,12 +142,9 @@ class ReceiptPage extends StatelessWidget {
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 5),
-                          Text(
+                          const Text(
                             'Your order has been placed successfully.',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              color: Colors.grey,
-                            ),
+                            style: TextStyle(fontSize: 16, color: Colors.grey),
                             textAlign: TextAlign.center,
                           ),
                           const SizedBox(height: 15),
@@ -170,8 +158,6 @@ class ReceiptPage extends StatelessWidget {
                       thickness: 1.0,
                       color: Colors.grey,
                     ),
-
-                    // Customer Details in Receipt
                     _buildReceiptDetailRow('Customer Name:', customerName),
                     _buildReceiptDetailRow(
                       'Delivery Address:',
@@ -181,8 +167,6 @@ class ReceiptPage extends StatelessWidget {
                     _buildReceiptDetailRow('Email:', email),
                     _buildReceiptDetailRow('Payment Method:', paymentMethod),
                     const SizedBox(height: 20),
-
-                    // Receipt Order Items
                     Text(
                       'Ordered Items:',
                       style: TextStyle(
@@ -194,17 +178,16 @@ class ReceiptPage extends StatelessWidget {
                     const SizedBox(height: 10),
                     Table(
                       columnWidths: const {
-                        0: FlexColumnWidth(1.5), // Product Name
-                        1: FlexColumnWidth(0.8), // Price
-                        2: FlexColumnWidth(0.5), // Qty
-                        3: FlexColumnWidth(1.0), // Total
+                        0: FlexColumnWidth(1.5),
+                        1: FlexColumnWidth(0.8),
+                        2: FlexColumnWidth(0.5),
+                        3: FlexColumnWidth(1.0),
                       },
                       border: TableBorder.all(
                         color: Colors.grey.shade300,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       children: [
-                        // Table Header
                         TableRow(
                           decoration: BoxDecoration(color: Colors.grey[200]),
                           children: const [
@@ -253,9 +236,7 @@ class ReceiptPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        // Table Rows for each item
                         ...items.map((item) {
-                          // Type casting for safety
                           final String title = item['title'] ?? 'N/A';
                           final double price =
                               (item['price'] as num?)?.toDouble() ?? 0.0;
@@ -306,13 +287,34 @@ class ReceiptPage extends StatelessWidget {
                         }).toList(),
                       ],
                     ),
+
+                    if (paymentMethod == 'Card') ...[
+                      const SizedBox(height: 20),
+                      _buildSectionTitle('Banking Information'),
+                      _buildReceiptDetailRow(
+                        'Bank Name:',
+                        'Habib Bank Limited',
+                      ),
+                      _buildReceiptDetailRow(
+                        'Account Title:',
+                        'Coffee Shop Pvt Ltd',
+                      ),
+                      _buildReceiptDetailRow(
+                        'IBAN:',
+                        'PK36 HABB 0000 1234 5678 9101',
+                      ),
+                      _buildReceiptDetailRow(
+                        'Transaction Ref:',
+                        'Auto Generated',
+                      ),
+                    ],
+
                     const Divider(
                       height: 30,
                       thickness: 1.0,
                       color: Colors.grey,
                     ),
 
-                    // Receipt Totals
                     _buildReceiptPriceRow(
                       'Subtotal:',
                       'Rs ${subtotal.toStringAsFixed(2)}',
@@ -331,7 +333,6 @@ class ReceiptPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 20),
-            // Back to Home button
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

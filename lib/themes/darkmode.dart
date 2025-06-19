@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 ThemeData darkMode = ThemeData(
   colorScheme: ColorScheme.dark( //built in class dark color scheme
-    surface: Colors.black54,
+    surface: Colors.black,
     primary:  Colors.red.shade900,
     secondary: Colors.grey.shade500,
     tertiary:Colors.grey.shade200,

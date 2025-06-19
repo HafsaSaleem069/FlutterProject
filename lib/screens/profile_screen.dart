@@ -20,8 +20,36 @@ class _ProfilePageState extends State<ProfilePage> {
   // Custom Colors (consistent with your app's theme)
   final Color customPrimaryColor = Colors.red.shade900;
   final Color customAccentColor = Colors.deepOrange;
-  final Color pageBackgroundColor = Colors.grey[50]!; // Lighter background for settings/profile
+  final Color pageBackgroundColor =
+      Colors.grey[50]!; // Lighter background for settings/profile
   final Color cardColor = Colors.white;
+  String? firestoreName;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchUserNameFromFirestore();
+  }
+
+  Future<void> _fetchUserNameFromFirestore() async {
+    if (currentUser != null) {
+      final doc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(currentUser!.uid)
+              .get();
+
+      if (doc.exists && doc.data() != null) {
+        setState(() {
+          firestoreName = doc.data()!['name'] ?? 'User Name';
+        });
+      } else {
+        setState(() {
+          firestoreName = 'User Name';
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -54,10 +82,18 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: customPrimaryColor,
-                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 12),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 30,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
-                child: const Text('Log In', style: TextStyle(fontSize: 16, color: Colors.white)),
+                child: const Text(
+                  'Log In',
+                  style: TextStyle(fontSize: 16, color: Colors.white),
+                ),
               ),
             ],
           ),
@@ -68,10 +104,14 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       backgroundColor: pageBackgroundColor,
       appBar: AppBar(
-        title: const Text('My Profile', style: TextStyle(fontWeight: FontWeight.bold)),
+        title: const Text(
+          'My Profile',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         elevation: 0,
-        backgroundColor: Colors.transparent, // Transparent AppBar
+        backgroundColor: Colors.transparent,
+        // Transparent AppBar
         foregroundColor: Colors.black, // Dark icons/text on light background
       ),
       body: SingleChildScrollView(
@@ -97,8 +137,10 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildUserInfoCard() {
     return Card(
-      elevation: 6, // Soft shadow
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)), // Rounded corners
+      elevation: 6,
+      // Soft shadow
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      // Rounded corners
       color: cardColor,
       child: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -108,48 +150,32 @@ class _ProfilePageState extends State<ProfilePage> {
             CircleAvatar(
               radius: 40,
               backgroundColor: customPrimaryColor.withOpacity(0.1),
-              backgroundImage: currentUser?.photoURL != null
-                  ? NetworkImage(currentUser!.photoURL!)
-                  : null,
-              child: currentUser?.photoURL == null
-                  ? Icon(Icons.person, size: 50, color: customPrimaryColor)
-                  : null,
+              backgroundImage:
+                  currentUser?.photoURL != null
+                      ? NetworkImage(currentUser!.photoURL!)
+                      : null,
+              child:
+                  currentUser?.photoURL == null
+                      ? Icon(Icons.person, size: 50, color: customPrimaryColor)
+                      : null,
             ),
             const SizedBox(height: 15),
             Text(
-              currentUser?.displayName ?? 'User Name',
+              firestoreName ?? 'Loading...',
               style: TextStyle(
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: Colors.black87,
               ),
             ),
+
             const SizedBox(height: 5),
             Text(
               currentUser?.email ?? 'user@example.com',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
+              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
             ),
             const SizedBox(height: 20),
-            // Edit Profile Button (Optional, if you have an edit profile page)
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {
-                  // Navigate to Edit Profile Page
-                  print("Navigate to Edit Profile Page");
-                },
-                icon: Icon(Icons.edit, size: 20, color: customPrimaryColor),
-                label: Text('Edit Profile', style: TextStyle(color: customPrimaryColor)),
-                style: OutlinedButton.styleFrom(
-                  side: BorderSide(color: customPrimaryColor, width: 1.5),
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                ),
-              ),
-            ),
+
           ],
         ),
       ),
@@ -172,10 +198,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildOrderHistoryList() {
     return StreamBuilder<QuerySnapshot>(
-      stream: FirebaseFirestore.instance
-          .collection('orders')
-          .where('userId', isEqualTo: currentUser!.uid)
-          .snapshots(),
+      stream:
+          FirebaseFirestore.instance
+              .collection('orders')
+              .where('userId', isEqualTo: currentUser!.uid)
+              .snapshots(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
@@ -206,7 +233,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
         return ListView.builder(
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(), // Scroll handled by SingleChildScrollView
+          physics: const NeverScrollableScrollPhysics(),
+          // Scroll handled by SingleChildScrollView
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             var orderDoc = snapshot.data!.docs[index];
@@ -215,18 +243,25 @@ class _ProfilePageState extends State<ProfilePage> {
             // Extracting data safely
             String orderId = orderDoc.id; // Document ID is the Order ID
             Timestamp? timestamp = orderData['timestamp'] as Timestamp?;
-            String orderDate = timestamp != null
-                ? DateFormat('MMM d, yyyy - hh:mm a').format(timestamp.toDate())
-                : 'N/A';
-            double finalTotal = (orderData['finalTotal'] as num?)?.toDouble() ?? 0.0;
+            String orderDate =
+                timestamp != null
+                    ? DateFormat(
+                      'MMM d, yyyy - hh:mm a',
+                    ).format(timestamp.toDate())
+                    : 'N/A';
+            double finalTotal =
+                (orderData['finalTotal'] as num?)?.toDouble() ?? 0.0;
             String orderStatus = orderData['orderStatus'] ?? 'Unknown';
             List<dynamic> items = orderData['items'] ?? [];
-            String restaurantName = orderData['restaurantName'] ?? 'Your Restaurant'; // Agar restaurant name save kiya hai
+            String restaurantName =
+                orderData['restaurantName'] ??
+                'Your Restaurant'; // Agar restaurant name save kiya hai
 
             // Display up to 2 items for summary
-            String itemsSummary = items.isNotEmpty
-                ? items.take(2).map((item) => item['title']).join(', ')
-                : 'No items';
+            String itemsSummary =
+                items.isNotEmpty
+                    ? items.take(2).map((item) => item['title']).join(', ')
+                    : 'No items';
             if (items.length > 2) {
               itemsSummary += ' and ${items.length - 2} more';
             }
@@ -234,15 +269,19 @@ class _ProfilePageState extends State<ProfilePage> {
             return Card(
               elevation: 4,
               margin: const EdgeInsets.only(bottom: 15),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               color: cardColor,
-              child: InkWell( // For ripple effect on tap
+              child: InkWell(
+                // For ripple effect on tap
                 onTap: () {
                   // Navigate to ReceiptPage with full order details
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ReceiptPage(orderDetails: orderData),
+                      builder:
+                          (context) => ReceiptPage(orderDetails: orderData),
                     ),
                   );
                 },
@@ -251,51 +290,75 @@ class _ProfilePageState extends State<ProfilePage> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Top Row with Order ID and Status
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            'Order ID: $orderId',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
+                          Tooltip(
+                            message: orderId,
+                            child: Text(
+                              'Order ID: ${orderId.length > 8 ? orderId.substring(0, 8) + '...' : orderId}',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
                             ),
                           ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
                               color: _getStatusColor(orderStatus),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
                               orderStatus,
-                              style: const TextStyle(color: Colors.white, fontSize: 12),
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                              ),
                             ),
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 8),
+
+                      // Restaurant Name
                       Text(
-                        restaurantName, // Agar multiple restaurants hain
+                        restaurantName,
                         style: TextStyle(fontSize: 14, color: Colors.grey[700]),
                       ),
+
                       const SizedBox(height: 4),
+
+                      // Date
                       Text(
                         orderDate,
                         style: TextStyle(fontSize: 13, color: Colors.grey[500]),
                       ),
+
                       const Divider(height: 20, thickness: 0.5),
+
+                      // Items Summary & Price
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
                             child: Text(
                               itemsSummary,
-                              style: TextStyle(fontSize: 14, color: Colors.grey[800]),
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey[800],
+                              ),
                               overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
                             ),
                           ),
+                          const SizedBox(width: 10),
                           Text(
                             'Rs ${finalTotal.toStringAsFixed(2)}',
                             style: TextStyle(
@@ -306,20 +369,32 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 10),
+
+                      // Reorder Button
                       Align(
                         alignment: Alignment.centerRight,
                         child: ElevatedButton.icon(
-                          onPressed: () {
-                            // Reorder functionality
-                            _handleReorder(orderData);
-                          },
-                          icon: const Icon(Icons.refresh, size: 18, color: Colors.white),
-                          label: const Text('Reorder', style: TextStyle(color: Colors.white)),
+                          onPressed: () => _handleReorder(orderData),
+                          icon: const Icon(
+                            Icons.refresh,
+                            size: 18,
+                            color: Colors.white,
+                          ),
+                          label: const Text(
+                            'Reorder',
+                            style: TextStyle(color: Colors.white),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: customPrimaryColor,
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                            padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 8),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 15,
+                              vertical: 8,
+                            ),
                             elevation: 3,
                           ),
                         ),
@@ -365,22 +440,28 @@ class _ProfilePageState extends State<ProfilePage> {
       // directly or fetch product details from your 'products' collection.
       reorderCartItems.add(
         QueryDocumentSnapshotMock(
-          id: item['productId'] ?? UniqueKey().toString(), // Use actual product ID or a mock
+          id: item['productId'] ?? UniqueKey().toString(),
+          // Use actual product ID or a mock
           data: item,
         ),
       );
     }
 
-    double reorderSubtotal = (previousOrderData['items'] as List)
-        .fold(0.0, (sum, item) => sum + ((item['price'] as num? ?? 0.0) * (item['quantity'] as num? ?? 0.0)));
+    double reorderSubtotal = (previousOrderData['items'] as List).fold(
+      0.0,
+      (sum, item) =>
+          sum +
+          ((item['price'] as num? ?? 0.0) * (item['quantity'] as num? ?? 0.0)),
+    );
 
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => CheckoutPage(
-          cartItems: reorderCartItems,
-          subtotal: reorderSubtotal,
-        ),
+        builder:
+            (context) => CheckoutPage(
+              cartItems: reorderCartItems,
+              subtotal: reorderSubtotal,
+            ),
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(
@@ -396,7 +477,10 @@ class QueryDocumentSnapshotMock implements QueryDocumentSnapshot {
   final String id;
   final Map<String, dynamic> _data;
 
-  QueryDocumentSnapshotMock({required this.id, required Map<String, dynamic> data}) : _data = data;
+  QueryDocumentSnapshotMock({
+    required this.id,
+    required Map<String, dynamic> data,
+  }) : _data = data;
 
   @override
   Map<String, dynamic> data() => _data;

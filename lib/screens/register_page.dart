@@ -15,6 +15,8 @@ class RegisterPage extends StatefulWidget {
 }
 
 class _RegisterPageState extends State<RegisterPage> {
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
@@ -22,14 +24,21 @@ class _RegisterPageState extends State<RegisterPage> {
   double strength = 0;
   String displayText = 'Enter a password';
   bool isLoading = false;
+  bool _isPasswordVisible = false;
+  bool _isConfirmPasswordVisible = false;
 
-  // 🔐 Register user logic
   Future<void> registerUser() async {
+    String name = nameController.text.trim();
+    String phone = phoneController.text.trim();
     String email = emailController.text.trim();
     String password = passwordController.text;
     String confirmPassword = confirmPasswordController.text;
 
-    if (email.isEmpty || password.isEmpty || confirmPassword.isEmpty) {
+    if (name.isEmpty ||
+        phone.isEmpty ||
+        email.isEmpty ||
+        password.isEmpty ||
+        confirmPassword.isEmpty) {
       showMessage('Please fill all fields');
       return;
     }
@@ -46,32 +55,29 @@ class _RegisterPageState extends State<RegisterPage> {
 
     setState(() => isLoading = true);
     try {
-      print(
-        'Registering user with $email and password length ${password.length}',
-      );
-      print("Checking Firebase apps: ${Firebase.apps}");
-
       final userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
 
       await FirebaseFirestore.instance
           .collection('users')
           .doc(userCredential.user!.uid)
-          .set({'email': email, 'createdAt': Timestamp.now()});
+          .set({
+            'name': name,
+            'phone': phone,
+            'email': email,
+            'createdAt': Timestamp.now(),
+          });
 
       showMessage('Account created successfully');
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage(onTap: () {})),
+      );
     } on FirebaseAuthException catch (e) {
-      print("FirebaseAuthException: ${e.code}, ${e.message}");
-      print("Full Exception: $e");
+      showMessage("Error: ${e.message}");
     } finally {
       setState(() => isLoading = false);
     }
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => LoginPage(onTap:() {}),
-      ),
-    );
   }
 
   void showMessage(String msg) {
@@ -112,18 +118,30 @@ class _RegisterPageState extends State<RegisterPage> {
               Icon(
                 Icons.person_add_alt_1,
                 size: 100,
-                color: Theme.of(context).colorScheme.inversePrimary,
+                color: Theme.of(context).colorScheme.primary,
               ),
               const SizedBox(height: 25),
               Text(
                 "Create Account",
                 style: TextStyle(
                   fontSize: 20,
-                  color: Theme.of(context).colorScheme.inversePrimary,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ),
               const SizedBox(height: 25),
 
+              MyTextField(
+                controller: nameController,
+                hintText: "Full Name",
+                obscureText: false,
+              ),
+              const SizedBox(height: 10),
+              MyTextField(
+                controller: phoneController,
+                hintText: "Phone Number",
+                obscureText: false,
+              ),
+              const SizedBox(height: 10),
               MyTextField(
                 controller: emailController,
                 hintText: "Email",
@@ -131,14 +149,28 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 10),
 
-              MyTextField(
+              // Password field with visibility toggle
+              TextField(
                 controller: passwordController,
-                hintText: "Password",
-                obscureText: true,
+                obscureText: !_isPasswordVisible,
                 onChanged: checkPassword,
+                decoration: InputDecoration(
+                  hintText: "Password",
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isPasswordVisible = !_isPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
               ),
 
-              // 🧠 Password strength meter
               const SizedBox(height: 8),
               LinearProgressIndicator(
                 value: strength,
@@ -155,14 +187,29 @@ class _RegisterPageState extends State<RegisterPage> {
               Text(displayText),
 
               const SizedBox(height: 10),
-              MyTextField(
+
+              // Confirm password field with visibility toggle
+              TextField(
                 controller: confirmPasswordController,
-                hintText: "Confirm Password",
-                obscureText: true,
+                obscureText: !_isConfirmPasswordVisible,
+                decoration: InputDecoration(
+                  hintText: "Confirm Password",
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _isConfirmPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                      });
+                    },
+                  ),
+                ),
               ),
 
               const SizedBox(height: 20),
-
               isLoading
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
@@ -179,7 +226,6 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
 
               const SizedBox(height: 15),
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -190,10 +236,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                    child: Text("Login"),
+                    onPressed: () => Navigator.pushNamed(context, '/login'),
+                    child: const Text("Login"),
                   ),
                 ],
               ),
