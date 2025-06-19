@@ -626,19 +626,6 @@
 // }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -717,11 +704,11 @@ class _HomePageState extends State<HomePage> {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       final snapshot =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .collection('wishlist')
-              .get();
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .collection('wishlist')
+          .get();
       if (mounted) {
         setState(() {
           wishlistIds = snapshot.docs.map((doc) => doc.id).toSet();
@@ -829,17 +816,25 @@ class _HomePageState extends State<HomePage> {
                     TextSpan(
                       text: "Feel ",
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.tertiary,
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .tertiary,
                       ),
                     ),
                     TextSpan(
                       text: "Hungry\n",
-                      style: TextStyle(color: Theme.of(context).primaryColor),
+                      style: TextStyle(color: Theme
+                          .of(context)
+                          .primaryColor),
                     ),
                     TextSpan(
                       text: "Order now",
                       style: TextStyle(
-                        color: Theme.of(context).colorScheme.tertiary,
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .tertiary,
                       ),
                     ),
                   ],
@@ -870,7 +865,10 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             const SizedBox(height: 20),
-            Text("Categories", style: Theme.of(context).textTheme.titleMedium),
+            Text("Categories", style: Theme
+                .of(context)
+                .textTheme
+                .titleMedium),
             const SizedBox(height: 10),
             SizedBox(
               height: 80,
@@ -899,9 +897,12 @@ class _HomePageState extends State<HomePage> {
                         padding: const EdgeInsets.symmetric(vertical: 10),
                         decoration: BoxDecoration(
                           color:
-                              isSelected
-                                  ? Theme.of(context).colorScheme.primary
-                                  : Colors.grey.shade200,
+                          isSelected
+                              ? Theme
+                              .of(context)
+                              .colorScheme
+                              .primary
+                              : Colors.grey.shade200,
                           borderRadius: BorderRadius.circular(50),
                         ),
                         child: Column(
@@ -969,12 +970,12 @@ class _HomePageState extends State<HomePage> {
                     padding: const EdgeInsets.only(bottom: 14),
 
                     gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          crossAxisSpacing: 12,
-                          mainAxisSpacing: 18,
-                          childAspectRatio: 0.68,
-                        ),
+                    const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 12,
+                      mainAxisSpacing: 18,
+                      childAspectRatio: 0.68,
+                    ),
                     itemCount: products.length,
                     itemBuilder: (context, index) {
                       final productId = products[index].id;
@@ -983,16 +984,26 @@ class _HomePageState extends State<HomePage> {
                       final query = _searchQuery.toLowerCase();
                       final matchIndex = title.toLowerCase().indexOf(query);
 
-                      final baseStyle = Theme.of(
+                      final baseStyle = Theme
+                          .of(
                         context,
-                      ).textTheme.bodyMedium!.copyWith(
+                      )
+                          .textTheme
+                          .bodyMedium!
+                          .copyWith(
                         fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.tertiary,
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .tertiary,
                       );
 
                       final TextStyle highlightStyle = baseStyle.copyWith(
                         fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
+                        color: Theme
+                            .of(context)
+                            .colorScheme
+                            .primary,
                       );
 
                       TextSpan styledTitle;
@@ -1029,12 +1040,18 @@ class _HomePageState extends State<HomePage> {
                         },
                         child: Container(
                           decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.secondary,
+                            color: Theme
+                                .of(context)
+                                .colorScheme
+                                .secondary,
                             borderRadius: BorderRadius.circular(12),
                             // More squarish
                             boxShadow: [
                               BoxShadow(
-                                color: Theme.of(context).colorScheme.tertiary,
+                                color: Theme
+                                    .of(context)
+                                    .colorScheme
+                                    .tertiary,
                                 blurRadius: 2,
                                 offset: const Offset(3, 3),
                               ),
@@ -1056,9 +1073,9 @@ class _HomePageState extends State<HomePage> {
                                     fit: BoxFit.cover,
                                     errorBuilder:
                                         (context, error, stackTrace) =>
-                                            const Icon(
-                                              Icons.image_not_supported,
-                                            ),
+                                    const Icon(
+                                      Icons.image_not_supported,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -1082,9 +1099,9 @@ class _HomePageState extends State<HomePage> {
                                           wishlistIds.contains(productId)
                                               ? removeFromWishlist(productId)
                                               : addToWishlist(
-                                                productId: productId,
-                                                productData: product.toJson(),
-                                              );
+                                            productId: productId,
+                                            productData: product.toJson(),
+                                          );
                                         } else {
                                           ScaffoldMessenger.of(
                                             context,
@@ -1101,9 +1118,9 @@ class _HomePageState extends State<HomePage> {
                                         Icons.favorite,
                                         size: 20,
                                         color:
-                                            wishlistIds.contains(productId)
-                                                ? Colors.red.shade900
-                                                : Colors.grey[400],
+                                        wishlistIds.contains(productId)
+                                            ? Colors.red.shade900
+                                            : Colors.grey[400],
                                       ),
                                     ),
                                   ],
@@ -1125,9 +1142,12 @@ class _HomePageState extends State<HomePage> {
                                     fontSize: 15,
                                     fontWeight: FontWeight.w800,
                                     color:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.inversePrimary,
+                                    Theme
+                                        .of(
+                                      context,
+                                    )
+                                        .colorScheme
+                                        .inversePrimary,
                                   ),
                                 ),
                               ),
