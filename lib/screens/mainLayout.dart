@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:project/admin/admin_panel.dart';
 import 'package:project/screens/product_screen.dart';
 import 'package:project/screens/profile_screen.dart';
+import 'package:project/screens/reservation.dart';
 import 'package:project/screens/wishlist_screen.dart';
 import 'bottom_bar.dart';
 import 'cart_page.dart';
@@ -61,16 +62,16 @@ class MainLayout extends StatelessWidget {
                       // Admin Icon
                       IconButton(
                         icon: const Icon(
-                          Icons.admin_panel_settings_rounded,
+                          Icons.app_registration_rounded,
                           size: 28,
-                          color: Colors.black87,
+                          color: Colors.black,
                         ),
                         tooltip: 'Admin Panel',
                         onPressed: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const AdminPanel(),
+                              builder: (_) =>  ReservationPage(),
                             ),
                           );
                         },

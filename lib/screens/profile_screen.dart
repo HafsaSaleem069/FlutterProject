@@ -2,10 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart'; // Date formatting ke liye
+import 'package:intl/intl.dart';
 import 'package:project/screens/reciept_screen.dart';
-
-import 'checkout.dart'; // ReceiptPage ke liye
+import 'checkout.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({Key? key}) : super(key: key);
@@ -17,12 +16,14 @@ class ProfilePage extends StatefulWidget {
 class _ProfilePageState extends State<ProfilePage> {
   final User? currentUser = FirebaseAuth.instance.currentUser;
 
-  // Custom Colors (consistent with your app's theme)
-  final Color customPrimaryColor = Colors.red.shade900;
-  final Color customAccentColor = Colors.deepOrange;
-  final Color pageBackgroundColor =
-      Colors.grey[50]!; // Lighter background for settings/profile
+  // Enhanced color scheme
+  final Color customPrimaryColor = const Color(0xFFB71C1C);
+  final Color customAccentColor = const Color(0xFFFF5722);
+  final Color pageBackgroundColor = const Color(0xFFF8F9FA);
   final Color cardColor = Colors.white;
+  final Color subtextColor = const Color(0xFF6B7280);
+  final Color textColor = const Color(0xFF1F2937);
+
   String? firestoreName;
 
   @override
@@ -56,46 +57,79 @@ class _ProfilePageState extends State<ProfilePage> {
     if (currentUser == null) {
       return Scaffold(
         backgroundColor: pageBackgroundColor,
-        appBar: AppBar(
-          title: const Text('Profile'),
-          centerTitle: true,
-          backgroundColor: customPrimaryColor,
-          foregroundColor: Colors.white,
-          elevation: 0,
-        ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.person_off, size: 80, color: Colors.grey[400]),
-              const SizedBox(height: 20),
-              Text(
-                'Please log in to view your profile.',
-                style: TextStyle(fontSize: 18, color: Colors.grey[700]),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  // Navigate to Login/Auth page
-                  // You might need to replace this with your actual login route
-                  print("Navigate to login page");
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: customPrimaryColor,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 30,
-                    vertical: 12,
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: 120,
+                    height: 120,
+                    decoration: BoxDecoration(
+                      color: Colors.grey[100],
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.person_off_outlined,
+                      size: 50,
+                      color: Colors.grey[400],
+                    ),
                   ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
+                  const SizedBox(height: 24),
+                  Text(
+                    'Please log in to view your profile',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: subtextColor,
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.center,
                   ),
-                ),
-                child: const Text(
-                  'Log In',
-                  style: TextStyle(fontSize: 16, color: Colors.white),
-                ),
+                  const SizedBox(height: 32),
+                  Container(
+                    width: double.infinity,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [customPrimaryColor, customAccentColor],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(24),
+                      boxShadow: [
+                        BoxShadow(
+                          color: customPrimaryColor.withOpacity(0.3),
+                          blurRadius: 12,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        print("Navigate to login page");
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                      ),
+                      child: const Text(
+                        'Log In',
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       );
@@ -103,96 +137,217 @@ class _ProfilePageState extends State<ProfilePage> {
 
     return Scaffold(
       backgroundColor: pageBackgroundColor,
-      appBar: AppBar(
-        title: const Text(
-          'My Profile',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        elevation: 0,
-        backgroundColor: Colors.transparent,
-        // Transparent AppBar
-        foregroundColor: Colors.black, // Dark icons/text on light background
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // User Info Card
-            _buildUserInfoCard(),
-            const SizedBox(height: 20),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Custom header
+              _buildHeader(),
 
-            // Order History Section Title
-            _buildSectionTitle('My Orders'),
-            const SizedBox(height: 10),
+              // User info section
+              _buildUserInfoSection(),
 
-            // Order History List (StreamBuilder for real-time updates)
-            _buildOrderHistoryList(),
-          ],
+              // Orders section
+              _buildOrdersSection(),
+            ],
+          ),
         ),
       ),
     );
   }
 
-  Widget _buildUserInfoCard() {
-    return Card(
-      elevation: 6,
-      // Soft shadow
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      // Rounded corners
-      color: cardColor,
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundColor: customPrimaryColor.withOpacity(0.1),
-              backgroundImage:
-                  currentUser?.photoURL != null
-                      ? NetworkImage(currentUser!.photoURL!)
-                      : null,
-              child:
-                  currentUser?.photoURL == null
-                      ? Icon(Icons.person, size: 50, color: customPrimaryColor)
-                      : null,
+  Widget _buildHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+      child: Row(
+        children: [
+          Text(
+            'My Profile',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: textColor,
             ),
-            const SizedBox(height: 15),
-            Text(
-              firestoreName ?? 'Loading...',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
+          ),
+          const Spacer(),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: customPrimaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Icon(
+              Icons.notifications_outlined,
+              size: 20,
+              color: customPrimaryColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserInfoSection() {
+    return Container(
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: cardColor,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 20,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [
+                  customPrimaryColor.withOpacity(0.1),
+                  customAccentColor.withOpacity(0.1),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              border: Border.all(
+                color: customPrimaryColor.withOpacity(0.2),
+                width: 2,
               ),
             ),
-
-            const SizedBox(height: 5),
-            Text(
-              currentUser?.email ?? 'user@example.com',
-              style: TextStyle(fontSize: 16, color: Colors.grey[600]),
+            child:
+                currentUser?.photoURL != null
+                    ? ClipOval(
+                      child: Image.network(
+                        currentUser!.photoURL!,
+                        fit: BoxFit.cover,
+                      ),
+                    )
+                    : Icon(
+                      Icons.person_outline,
+                      size: 36,
+                      color: customPrimaryColor,
+                    ),
+          ),
+          const SizedBox(height: 16),
+          Text(
+            firestoreName ?? 'Loading...',
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: textColor,
             ),
-            const SizedBox(height: 20),
-
-          ],
-        ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            currentUser?.email ?? 'user@example.com',
+            style: TextStyle(
+              fontSize: 12,
+              color: subtextColor,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: _buildStatCard(
+                  'Total Orders',
+                  '12',
+                  Icons.receipt_long_outlined,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildStatCard('Favorites', '8', Icons.favorite_outline),
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildSectionTitle(String title) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        title,
-        style: TextStyle(
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
-          color: customPrimaryColor,
-        ),
+  Widget _buildStatCard(String title, String value, IconData icon) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
+      decoration: BoxDecoration(
+        color: pageBackgroundColor,
+        borderRadius: BorderRadius.circular(16),
       ),
+      child: Column(
+        children: [
+          Container(
+            width: 32,
+            height: 32,
+            decoration: BoxDecoration(
+              color: customPrimaryColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Icon(icon, size: 16, color: customPrimaryColor),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w700,
+              color: textColor,
+            ),
+          ),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 10,
+              color: subtextColor,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildOrdersSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+          child: Row(
+            children: [
+              Text(
+                'Recent Orders',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: textColor,
+                ),
+              ),
+              const Spacer(),
+              Text(
+                'View All',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: customPrimaryColor,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+        _buildOrderHistoryList(),
+      ],
     );
   }
 
@@ -206,27 +361,62 @@ class _ProfilePageState extends State<ProfilePage> {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(
-            child: CircularProgressIndicator(color: customPrimaryColor),
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: CircularProgressIndicator(
+                color: customPrimaryColor,
+                strokeWidth: 2,
+              ),
+            ),
           );
         }
         if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
+          return Center(
+            child: Text(
+              'Error: ${snapshot.error}',
+              style: TextStyle(fontSize: 12, color: subtextColor),
+            ),
+          );
         }
         if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Column(
-                children: [
-                  Icon(Icons.receipt_long, size: 80, color: Colors.grey[400]),
-                  const SizedBox(height: 10),
-                  Text(
-                    'No orders yet. Place your first order!',
-                    style: TextStyle(fontSize: 16, color: Colors.grey[700]),
-                    textAlign: TextAlign.center,
+          return Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(32),
+            decoration: BoxDecoration(
+              color: cardColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[100],
+                    shape: BoxShape.circle,
                   ),
-                ],
-              ),
+                  child: Icon(
+                    Icons.receipt_long_outlined,
+                    size: 24,
+                    color: Colors.grey[400],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  'No orders yet',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: textColor,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Place your first order to see it here',
+                  style: TextStyle(fontSize: 11, color: subtextColor),
+                  textAlign: TextAlign.center,
+                ),
+              ],
             ),
           );
         }
@@ -234,49 +424,48 @@ class _ProfilePageState extends State<ProfilePage> {
         return ListView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          // Scroll handled by SingleChildScrollView
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           itemCount: snapshot.data!.docs.length,
           itemBuilder: (context, index) {
             var orderDoc = snapshot.data!.docs[index];
             var orderData = orderDoc.data() as Map<String, dynamic>;
 
-            // Extracting data safely
-            String orderId = orderDoc.id; // Document ID is the Order ID
+            String orderId = orderDoc.id;
             Timestamp? timestamp = orderData['timestamp'] as Timestamp?;
             String orderDate =
                 timestamp != null
-                    ? DateFormat(
-                      'MMM d, yyyy - hh:mm a',
-                    ).format(timestamp.toDate())
+                    ? DateFormat('MMM d, hh:mm a').format(timestamp.toDate())
                     : 'N/A';
             double finalTotal =
                 (orderData['finalTotal'] as num?)?.toDouble() ?? 0.0;
             String orderStatus = orderData['orderStatus'] ?? 'Unknown';
             List<dynamic> items = orderData['items'] ?? [];
             String restaurantName =
-                orderData['restaurantName'] ??
-                'Your Restaurant'; // Agar restaurant name save kiya hai
+                orderData['restaurantName'] ?? 'Your Restaurant';
 
-            // Display up to 2 items for summary
             String itemsSummary =
                 items.isNotEmpty
                     ? items.take(2).map((item) => item['title']).join(', ')
                     : 'No items';
             if (items.length > 2) {
-              itemsSummary += ' and ${items.length - 2} more';
+              itemsSummary += ' +${items.length - 2} more';
             }
 
-            return Card(
-              elevation: 4,
-              margin: const EdgeInsets.only(bottom: 15),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+            return Container(
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: cardColor,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.04),
+                    blurRadius: 15,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
-              color: cardColor,
               child: InkWell(
-                // For ripple effect on tap
                 onTap: () {
-                  // Navigate to ReceiptPage with full order details
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -285,24 +474,49 @@ class _ProfilePageState extends State<ProfilePage> {
                     ),
                   );
                 },
+                borderRadius: BorderRadius.circular(16),
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Top Row with Order ID and Status
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Tooltip(
-                            message: orderId,
-                            child: Text(
-                              'Order ID: ${orderId.length > 8 ? orderId.substring(0, 8) + '...' : orderId}',
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
+                          Container(
+                            width: 40,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: customPrimaryColor.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            child: Icon(
+                              Icons.restaurant_outlined,
+                              size: 20,
+                              color: customPrimaryColor,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  restaurantName,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: textColor,
+                                  ),
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  orderDate,
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: subtextColor,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           Container(
@@ -311,93 +525,75 @@ class _ProfilePageState extends State<ProfilePage> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: _getStatusColor(orderStatus),
-                              borderRadius: BorderRadius.circular(8),
+                              color: _getStatusColor(
+                                orderStatus,
+                              ).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(12),
                             ),
                             child: Text(
                               orderStatus,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
+                              style: TextStyle(
+                                color: _getStatusColor(orderStatus),
+                                fontSize: 10,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
                         ],
                       ),
-
-                      const SizedBox(height: 8),
-
-                      // Restaurant Name
+                      const SizedBox(height: 12),
                       Text(
-                        restaurantName,
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                        itemsSummary,
+                        style: TextStyle(fontSize: 12, color: subtextColor),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
-
-                      const SizedBox(height: 4),
-
-                      // Date
-                      Text(
-                        orderDate,
-                        style: TextStyle(fontSize: 13, color: Colors.grey[500]),
-                      ),
-
-                      const Divider(height: 20, thickness: 0.5),
-
-                      // Items Summary & Price
+                      const SizedBox(height: 12),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(
-                            child: Text(
-                              itemsSummary,
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey[800],
-                              ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
-                            ),
-                          ),
-                          const SizedBox(width: 10),
                           Text(
-                            'Rs ${finalTotal.toStringAsFixed(2)}',
+                            'Rs ${finalTotal.toStringAsFixed(0)}',
                             style: TextStyle(
                               fontSize: 16,
-                              fontWeight: FontWeight.bold,
+                              fontWeight: FontWeight.w700,
                               color: customAccentColor,
                             ),
                           ),
+                          Container(
+                            height: 32,
+                            decoration: BoxDecoration(
+                              color: Theme.of(context).colorScheme.primary,
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            child: ElevatedButton.icon(
+                              onPressed: () => _handleReorder(orderData),
+                              icon: const Icon(
+                                Icons.refresh,
+                                size: 14,
+                                color: Colors.white,
+                              ),
+                              label: const Text(
+                                'Reorder',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.transparent,
+                                shadowColor: Colors.transparent,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(16),
+                                ),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      // Reorder Button
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: ElevatedButton.icon(
-                          onPressed: () => _handleReorder(orderData),
-                          icon: const Icon(
-                            Icons.refresh,
-                            size: 18,
-                            color: Colors.white,
-                          ),
-                          label: const Text(
-                            'Reorder',
-                            style: TextStyle(color: Colors.white),
-                          ),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: customPrimaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 15,
-                              vertical: 8,
-                            ),
-                            elevation: 3,
-                          ),
-                        ),
                       ),
                     ],
                   ),
@@ -410,38 +606,30 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Helper function for status colors
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Delivered':
-        return Colors.green;
+        return const Color(0xFF11A00A);
       case 'Pending':
-        return Colors.orange;
+        return const Color(0xFFF59E0B);
       case 'Processing':
-        return Colors.blue;
+        return const Color(0xFF3B82F6);
       case 'Cancelled':
-        return Colors.red;
-      case 'Payment Confirmed': // Add this status for banking
-        return Colors.purple;
+        return const Color(0xFFEF4444);
+      case 'Payment Confirmed':
+        return const Color(0xFF8B5CF6);
       default:
-        return Colors.grey;
+        return const Color(0xFF6B7280);
     }
   }
 
-  // Reorder Logic - Same as discussed previously
   void _handleReorder(Map<String, dynamic> previousOrderData) {
     List<QueryDocumentSnapshot> reorderCartItems = [];
 
-    // Assuming 'items' in orderData has 'productId', 'title', 'image', 'price', 'quantity'
-    // This part might need adjustment based on how your CheckoutPage constructor expects items
     for (var item in previousOrderData['items']) {
-      // Create a mock QueryDocumentSnapshot. In a real app,
-      // consider refactoring CheckoutPage to accept List<Map<String, dynamic>>
-      // directly or fetch product details from your 'products' collection.
       reorderCartItems.add(
         QueryDocumentSnapshotMock(
           id: item['productId'] ?? UniqueKey().toString(),
-          // Use actual product ID or a mock
           data: item,
         ),
       );
@@ -465,13 +653,20 @@ class _ProfilePageState extends State<ProfilePage> {
       ),
     );
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Items added to cart for reorder!')),
+      SnackBar(
+        content: const Text(
+          'Items added to cart for reorder!',
+          style: TextStyle(fontSize: 12),
+        ),
+        backgroundColor: customPrimaryColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     );
   }
 }
 
-// Dummy class to mimic QueryDocumentSnapshot for illustration
-// (As discussed, consider refactoring CheckoutPage to avoid this mock)
+// Mock class remains the same
 class QueryDocumentSnapshotMock implements QueryDocumentSnapshot {
   @override
   final String id;
@@ -485,7 +680,6 @@ class QueryDocumentSnapshotMock implements QueryDocumentSnapshot {
   @override
   Map<String, dynamic> data() => _data;
 
-  // Implement other abstract methods as needed, or leave as UnimplementedError
   @override
   DocumentReference<Object?> get reference => throw UnimplementedError();
 
@@ -496,12 +690,10 @@ class QueryDocumentSnapshotMock implements QueryDocumentSnapshot {
   SnapshotMetadata get metadata => throw UnimplementedError();
 
   @override
-  // CORRECTED: Return type changed to dynamic
   dynamic get(Object field) {
     if (_data.containsKey(field)) {
-      return _data[field]; // Directly return the value, no need for 'as T' here
+      return _data[field];
     }
-    // Return null if the field is not found, as per Firestore's dynamic get behavior
     return null;
   }
 
@@ -522,7 +714,6 @@ class QueryDocumentSnapshotMock implements QueryDocumentSnapshot {
 
   @override
   operator [](Object field) {
-    // TODO: implement []
     throw UnimplementedError();
   }
 }

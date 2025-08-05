@@ -72,23 +72,5 @@ class Product {
     };
   }
 
-// <--- END OF toJson METHOD --->
-  // --- NEW: Factory for converting Algolia search results (hits) to Product objects ---
-  factory Product.fromAlgoliaHit(Map<String, dynamic> json) {
-    // Algolia returns the unique identifier of the record as 'objectID'.
-    // This 'objectID' should typically be the same as your Firestore document ID.
-    return Product(
-      id: json['objectID'] ?? '', // Crucial: Map Algolia's objectID to your Product's id
-      title: json['title'] ?? '',
-      image: json['image'] ?? '',
-      price: (json['price'] ?? 0).toDouble(),
-      description: json['description'] ?? '',
-      detail: json['detail'] ?? '',
-      category: json['category'] ?? '',
-      rating: (json['rating'] ?? 0).toDouble(),
-      favourites: (json['favourites'] ?? 0).toInt(),
-    );
-  }
-// --- END NEW FACTORY ---
 
 }

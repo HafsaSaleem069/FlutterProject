@@ -74,8 +74,8 @@ class BottomNavBar extends StatelessWidget {
       currentIndex: selectedIndex,
       onTap: (index) => _onBottomNavTapped(context, index),
       type: BottomNavigationBarType.fixed,
-      unselectedItemColor:Colors.black,
-      backgroundColor:  Theme.of(context).colorScheme.secondary,
+      unselectedItemColor: Colors.black,
+      backgroundColor: Colors.red.shade50,
       showUnselectedLabels: true,
       selectedItemColor: Theme.of(context).colorScheme.primary,
       items: [
@@ -147,7 +147,7 @@ class BottomNavBar extends StatelessWidget {
         padding: const EdgeInsets.all(8),
         child: Icon(
           icon,
-          color: index == selectedIndex ? Colors.white :Colors.black,
+          color: index == selectedIndex ? Colors.white : Colors.black,
         ),
       ),
       label: label,

@@ -52,13 +52,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       // Agar aap Cloud Functions use nahi kar rahe, toh yeh chalega, lekin scale nahi karega.
       int count = 0;
       final usersSnapshot =
-          await FirebaseFirestore.instance.collection('users').get();
+      await FirebaseFirestore.instance.collection('users').get();
       for (var userDoc in usersSnapshot.docs) {
         final wishlistSnapshot =
-            await userDoc.reference
-                .collection('wishlist')
-                .doc(widget.product.id)
-                .get();
+        await userDoc.reference
+            .collection('wishlist')
+            .doc(widget.product.id)
+            .get();
         if (wishlistSnapshot.exists) {
           count++;
         }
@@ -74,13 +74,13 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
       // to aapko woh data fetch karke average nikalna hoga.
       // Example: Agar har user ne product ko rate kiya aur woh ratings 'product_ratings' subcollection mein hain:
       final productRatingsSnapshot =
-          await FirebaseFirestore.instance
-              .collection('products')
-              .doc(widget.product.id)
-              .collection(
-                'user_ratings',
-              ) // Assuming a subcollection for user-specific ratings
-              .get();
+      await FirebaseFirestore.instance
+          .collection('products')
+          .doc(widget.product.id)
+          .collection(
+        'user_ratings',
+      ) // Assuming a subcollection for user-specific ratings
+          .get();
 
       if (productRatingsSnapshot.docs.isNotEmpty) {
         double totalSum = 0;
@@ -182,9 +182,9 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           .collection('user_ratings') // Nayi subcollection
           .doc(currentUser.uid) // User ki ID se document banayein
           .set({
-            'rating': newRating,
-            'timestamp': FieldValue.serverTimestamp(),
-          });
+        'rating': newRating,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
 
       // Rating save hone ke baad counts aur ratings ko dobara fetch karein
       await _fetchProductCountsAndRatings();
@@ -279,14 +279,17 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       Text(
                         product.title,
                         style: const TextStyle(
-                          fontSize: 24,
+                          fontSize: 18, // Reduced from 20
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Text(
                         product.description,
-                        style: const TextStyle(color: Colors.grey),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12, // Added smaller font size
+                        ),
                       ),
                       const SizedBox(height: 16),
                       Column(
@@ -297,19 +300,22 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                  vertical: 4,
-                                  horizontal: 12,
+                                  vertical: 3,
+                                  horizontal: 10,
                                 ),
                                 decoration: BoxDecoration(
                                   color: Colors.green.shade100,
                                   borderRadius: BorderRadius.circular(20),
                                 ),
-                                child: const Text("Free Delivery"),
+                                child: const Text(
+                                  "Free Delivery",
+                                  style: TextStyle(fontSize: 11), // Added smaller font
+                                ),
                               ),
                               Text(
                                 "Rs. ${totalPrice.toInt()}",
                                 style: const TextStyle(
-                                  fontSize: 20,
+                                  fontSize: 16, // Reduced from 18
                                   fontWeight: FontWeight.bold,
                                   color: Colors.deepOrange,
                                 ),
@@ -319,17 +325,21 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                           const SizedBox(height: 10),
                           Text(
                             "Rate this product:",
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13, // Added smaller font
+                            ),
                           ),
                           Row(
                             children: List.generate(5, (index) {
                               return IconButton(
                                 icon: Icon(
                                   index <
-                                          currentRating // User ki selected rating dikhayegi
+                                      currentRating // User ki selected rating dikhayegi
                                       ? Icons.star
                                       : Icons.star_border,
                                   color: Colors.amber,
+                                  size: 20, // Reduced icon size
                                 ),
                                 onPressed: () {
                                   setState(() {
@@ -347,23 +357,18 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceAround,
                         children: [
-                          // Favourites count display
-                          _isLoadingCounts
-                              ? CircularProgressIndicator() // Loading state
-                              : _circularInfo(
-                                "$_favouriteCount", // Dynamically fetched count
-                                "Favourite",
-                                Icons.favorite,
-                              ),
-                          // Reviews/Rating display
-                          _isLoadingCounts
-                              ? CircularProgressIndicator() // Loading state
-                              : _circularInfo(
-                                "${_averageRating.toStringAsFixed(1)}",
-                                // Dynamically fetched average
-                                "Reviews",
-                                Icons.star,
-                              ),
+                          // Favourites count display - No loader, show default values
+                          _circularInfo(
+                            _isLoadingCounts ? "0" : "$_favouriteCount", // Show 0 while loading
+                            "Favourite",
+                            Icons.favorite,
+                          ),
+                          // Reviews/Rating display - No loader, show default values
+                          _circularInfo(
+                            _isLoadingCounts ? "0.0" : "${_averageRating.toStringAsFixed(1)}", // Show 0.0 while loading
+                            "Reviews",
+                            Icons.star,
+                          ),
                           _circularInfo("50+", "Sold", Icons.shopping_cart),
                         ],
                       ),
@@ -371,75 +376,247 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                       const Text(
                         "Description",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 12, // Reduced from 14
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(product.detail),
+                      Text(
+                        product.detail,
+                        style: const TextStyle(
+                          fontSize: 11, // Added smaller font for detail
+                        ),
+                      ),
                       const SizedBox(height: 20),
 
+                      // Pizza Customization Section
                       if (product.category == 'Pizza') ...[
-                        const Text(
-                          "Customize Your Pizza",
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                        Container(
+                          padding: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(15),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.05),
+                                blurRadius: 10,
+                                offset: const Offset(0, 5),
+                              ),
+                            ],
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Icon(
+                                    Icons.local_pizza,
+                                    color: Colors.red.shade700,
+                                    size: 18, // Reduced icon size
+                                  ),
+                                  const SizedBox(width: 8),
+                                  const Text(
+                                    "Customize Your Pizza",
+                                    style: TextStyle(
+                                      fontSize: 14, // Reduced from 16
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const SizedBox(height: 12),
+
+                              // Size Selection
+                              const Text(
+                                "Size",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12, // Reduced from 14
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Row(
+                                children:
+                                ['Small', 'Medium', 'Large', 'Party'].map((
+                                    size,
+                                    ) {
+                                  bool isSelected = selectedSize == size;
+                                  return Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(
+                                        right: 8,
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedSize =
+                                            isSelected ? null : size;
+                                            updatePrice();
+                                          });
+                                        },
+                                        child: Container(
+                                          padding:
+                                          const EdgeInsets.symmetric(
+                                            vertical: 8,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            gradient:
+                                            isSelected
+                                                ? LinearGradient(
+                                              colors: [
+                                                Colors.red.shade700,
+                                                Colors.red.shade900,
+                                              ],
+                                            )
+                                                : null,
+                                            color:
+                                            isSelected
+                                                ? null
+                                                : Colors.grey.shade100,
+                                            borderRadius:
+                                            BorderRadius.circular(12),
+                                            border: Border.all(
+                                              color:
+                                              isSelected
+                                                  ? Colors.red.shade900
+                                                  : Colors
+                                                  .grey
+                                                  .shade300,
+                                              width: 1,
+                                            ),
+                                          ),
+                                          child: Text(
+                                            size,
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color:
+                                              isSelected
+                                                  ? Colors.white
+                                                  : Colors.black87,
+                                              fontWeight:
+                                              isSelected
+                                                  ? FontWeight.bold
+                                                  : FontWeight.w500,
+                                              fontSize: 11, // Reduced from 12
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+
+                              const SizedBox(height: 16),
+
+                              // Toppings Selection
+                              const Text(
+                                "Toppings",
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 12, // Reduced from 14
+                                  color: Colors.black87,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 8,
+                                children:
+                                [
+                                  'Extra Cheese',
+                                  'Jalapeños',
+                                  'Olives',
+                                ].map((topping) {
+                                  bool isSelected = selectedToppings
+                                      .contains(topping);
+                                  return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (isSelected) {
+                                          selectedToppings.remove(topping);
+                                        } else {
+                                          selectedToppings.add(topping);
+                                        }
+                                        updatePrice();
+                                      });
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 8,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        gradient:
+                                        isSelected
+                                            ? LinearGradient(
+                                          colors: [
+                                            Colors.orange.shade400,
+                                            Colors.orange.shade600,
+                                          ],
+                                        )
+                                            : null,
+                                        color:
+                                        isSelected
+                                            ? null
+                                            : Colors.grey.shade100,
+                                        borderRadius: BorderRadius.circular(
+                                          20,
+                                        ),
+                                        border: Border.all(
+                                          color:
+                                          isSelected
+                                              ? Colors.orange.shade600
+                                              : Colors.grey.shade300,
+                                          width: 1,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            isSelected
+                                                ? Icons.check_circle
+                                                : Icons.add_circle_outline,
+                                            size: 14, // Reduced from 16
+                                            color:
+                                            isSelected
+                                                ? Colors.white
+                                                : Colors.grey.shade600,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            topping,
+                                            style: TextStyle(
+                                              color:
+                                              isSelected
+                                                  ? Colors.white
+                                                  : Colors.black87,
+                                              fontWeight:
+                                              isSelected
+                                                  ? FontWeight.bold
+                                                  : FontWeight.w500,
+                                              fontSize: 11, // Reduced from 12
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                              ),
+                            ],
                           ),
                         ),
-                        const SizedBox(height: 10),
-                        Wrap(
-                          spacing: 10,
-                          children:
-                              ['Small', 'Medium', 'Large', 'Party']
-                                  .map(
-                                    (size) => ChoiceChip(
-                                      label: Text(size),
-                                      selected: selectedSize == size,
-                                      onSelected: (val) {
-                                        setState(() {
-                                          selectedSize = val ? size : null;
-                                          updatePrice();
-                                        });
-                                      },
-                                    ),
-                                  )
-                                  .toList(),
-                        ),
-                        const SizedBox(height: 12),
-                        const Text(
-                          "Toppings",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Wrap(
-                          spacing: 10,
-                          children:
-                              ['Extra Cheese', 'Jalapeños', 'Olives']
-                                  .map(
-                                    (topping) => FilterChip(
-                                      label: Text(topping),
-                                      selected: selectedToppings.contains(
-                                        topping,
-                                      ),
-                                      onSelected: (val) {
-                                        setState(() {
-                                          if (val) {
-                                            selectedToppings.add(topping);
-                                          } else {
-                                            selectedToppings.remove(topping);
-                                          }
-                                          updatePrice();
-                                        });
-                                      },
-                                    ),
-                                  )
-                                  .toList(),
-                        ),
-                        const SizedBox(height: 20),
+                        const SizedBox(height: 16),
                       ],
                       const SizedBox(height: 20),
                       ElevatedButton(
-                        onPressed: () {addToCart(product.toJson());},
+                        onPressed: () {
+                          addToCart(product.toJson());
+                        },
                         style: ElevatedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(30),
@@ -450,7 +627,7 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
                         child: Text(
                           "Add to Cart -   Rs. ${totalPrice.toInt()}",
                           style: const TextStyle(
-                            fontSize: 18,
+                            fontSize: 13, // Reduced from 14
                             color: Colors.white,
                           ),
                         ),
@@ -489,20 +666,26 @@ class _ProductDetailPageState extends State<ProductDetailPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: Colors.white),
+              Icon(icon, color: Colors.white, size: 18), // Reduced icon size
               const SizedBox(height: 5),
               Text(
                 value,
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   color: Colors.white,
+                  fontSize: 11, // Added smaller font
                 ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 6),
-        Text(label),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 11, // Added smaller font for label
+          ),
+        ),
       ],
     );
   }
